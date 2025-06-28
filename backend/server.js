@@ -6,7 +6,7 @@ const authRoutes = require('./routes/authRoutes.route')
 const postRoutes = require('./routes/postRoutes.route')
 const commentRoutes = require('./routes/commentRoutes.route');
 const userRoutes = require('./routes/user.route');
-
+const { swaggerUi, swaggerSpec } = require("./config/swagger")
 dotenv.config();
  
 const app = express();
@@ -21,7 +21,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/', commentRoutes);
 app.use('/api/users', userRoutes);
-
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
 app.listen(process.env.PORT || 8000, () => {
   console.log(`Server is running on port ${process.env.PORT || 8000}`);
