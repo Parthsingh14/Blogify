@@ -1,106 +1,78 @@
-# Blogify Backend API
+# Blogify - Fullstack Blogging Platform
 
-This backend provides RESTful APIs for user authentication and blog post management.
+Blogify is a fullstack blogging platform with user authentication, blog post management, comments, and admin features.  
+This monorepo contains both the backend API (Node.js/Express/MongoDB) and the frontend (Next.js/React).
 
-## Base URL
+---
+
+## Backend API
+
+### Base URL
 
 ```
 http://localhost:8000/api/
 ```
 
----
+### Authentication
 
-## Authentication Routes
+- **POST** `/api/auth/register`  
+  Register a new user.  
+  Body: `{ name, email, password, role? }`
 
-### Register User
+- **POST** `/api/auth/login`  
+  Login and receive JWT token.  
+  Body: `{ email, password }`
 
-- **URL:** `/api/auth/register`
-- **Method:** `POST`
-- **Body:**
-  - `name` (string, required)
-  - `email` (string, required)
-  - `password` (string, required)
-  - `role` (string, optional: `'user'` or `'admin'`)
-- **Description:** Registers a new user and returns a JWT token.
+### Posts
 
----
+- **GET** `/api/posts`  
+  List all posts. Supports `?page`, `?limit`, `?category`, `?search`.
 
-### Login User
+- **POST** `/api/posts`  
+  Create a post (auth required).  
+  Form-data: `title`, `content`, `category`, `coverImage` (file)
 
-- **URL:** `/api/auth/login`
-- **Method:** `POST`
-- **Body:**
-  - `email` (string, required)
-  - `password` (string, required)
-- **Description:** Authenticates a user and returns a JWT token.
+- **GET** `/api/posts/:id`  
+  Get a single post by ID.
 
----
+- **PUT** `/api/posts/:id`  
+  Update a post (auth, only author).
 
-## Post Routes
+- **DELETE** `/api/posts/:id`  
+  Delete a post (auth, only author).
 
-### Create Post
+### Comments
 
-- **URL:** `/api/posts/`
-- **Method:** `POST`
-- **Headers:** `Authorization: Bearer <token>`
-- **Body (form-data):**
-  - `title` (string, required)
-  - `content` (string, required)
-  - `category` (string, required)
-  - `coverImage` (file, optional)
-- **Description:** Creates a new blog post. Only authenticated users can create posts. Supports image upload.
+- **GET** `/api/posts/:postId/comments`  
+  List all comments for a post.
 
----
+- **POST** `/api/posts/:postId/comments`  
+  Add a comment (auth required).  
+  Body: `{ text }`
 
-### Get All Posts
+- **DELETE** `/api/comments/:commentId`  
+  Delete a comment (auth, only author).
 
-- **URL:** `/api/posts/`
-- **Method:** `GET`
-- **Description:** Retrieves all blog posts, sorted by creation date (newest first).
+### Users (Admin Only)
+
+- **GET** `/api/users`  
+  List all users (admin only).
+
+- **DELETE** `/api/users/:userId`  
+  Delete a user (admin only).
 
 ---
 
-### Get Single Post
+## API Documentation (Swagger UI)
 
-- **URL:** `/api/posts/:id`
-- **Method:** `GET`
-- **Description:** Retrieves a single blog post by its ID.
-
----
-
-### Update Post
-
-- **URL:** `/api/posts/:id`
-- **Method:** `PUT`
-- **Headers:** `Authorization: Bearer <token>`
-- **Body:**
-  - `title` (string, optional)
-  - `content` (string, optional)
-  - `category` (string, optional)
-- **Description:** Updates a blog post. Only the author can update their post.
-
----
-
-### Delete Post
-
-- **URL:** `/api/posts/:id`
-- **Method:** `DELETE`
-- **Headers:** `Authorization: Bearer <token>`
-- **Description:** Deletes a blog post. Only the author can delete their post.
-
----
-
-## Middleware
-
-- **authMiddleware:** Protects routes, requires a valid JWT token.
-- **adminMiddleware:** (Not used in routes above) Restricts access to admin users.
-- **uploadMiddleware:** Handles image uploads for posts.
+Interactive API docs available at:  
+[http://localhost:8000/api-docs](http://localhost:8000/api-docs)
 
 ---
 
 ## Environment Variables
 
-Set the following in your `.env` file:
+Set the following in your `.env` file (backend):
 
 ```
 PORT=8000
@@ -114,9 +86,46 @@ CLOUDINARY_API_SECRET=your_cloudinary_secret
 
 ---
 
-## Notes
+## Frontend (Next.js)
 
-- All protected routes require the `Authorization` header with a valid JWT token.
-- Image uploads use Cloudinary.
-- User roles supported: `user`, `admin`.
+### Getting Started
+
+1. Install dependencies:
+
+   ```bash
+   cd blogify-frontend
+   npm install
+   ```
+
+2. Run the development server:
+
+   ```bash
+   npm run dev
+   ```
+
+   Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+### Features
+
+- User registration and login (JWT-based)
+- Create, edit, delete blog posts (with image upload)
+- Comment on posts
+- Admin user management (backend API)
+- Responsive UI with Tailwind CSS
+
+### Configuration
+
+- The frontend expects the backend API at `http://localhost:8000/api`.  
+  Change `src/lib/api.js` if your backend runs elsewhere.
+
+---
+
+## Learn More
+
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Swagger UI](https://swagger.io/tools/swagger-ui/)
+- [MongoDB](https://www.mongodb.com/)
+- [Cloudinary](https://cloudinary.com/)
+
+---
 
