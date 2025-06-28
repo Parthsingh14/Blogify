@@ -46,14 +46,44 @@ module.exports.createPost = async (req, res) => {
 };
 
 module.exports.getAllPosts = async (req, res) => {
-  const posts = await Post.find()
+ try{
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = (page - 1) * limit;
+
+  const {category,search} = req.query;
+  const query = {};
+  if (category) {
+    query.category = category;
+  }
+  if(search){
+    query.$or = [
+      { title: { $regex: search, $options: "i" } },
+      { content: { $regex: search, $options: "i" } }
+    ];
+  }
+
+  const total = await Post.countDocuments(query);
+  const posts = await Post.find(query)
     .populate("author", "name email")
-    .sort({ createdAt: -1 });
-  res.status(200).json({
-    message: "Posts fetched successfully",
-    posts: posts,
-  });
-};
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit);
+
+    res.json({
+      total,
+      page,
+      pages: Math.ceil(total / limit),
+      posts,
+    });
+ }
+  catch (err) {
+    console.error("Error fetching posts:", err);
+    res.status(500).json({
+      message: "Internal server error",
+      error: err.message,
+    });
+}};
 
 module.exports.getSinglePost = async (req, res) => {
   const post = await Post.findById(req.params.id).populate(

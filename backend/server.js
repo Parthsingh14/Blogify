@@ -5,6 +5,7 @@ const connectDB = require('./config/db')
 const authRoutes = require('./routes/authRoutes.route')
 const postRoutes = require('./routes/postRoutes.route')
 const commentRoutes = require('./routes/commentRoutes.route');
+const userRoutes = require('./routes/user.route');
 
 dotenv.config();
  
@@ -19,6 +20,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/auth', authRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/', commentRoutes);
+app.use('/api/users', userRoutes);
 
 
 app.listen(process.env.PORT || 8000, () => {
