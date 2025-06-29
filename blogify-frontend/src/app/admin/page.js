@@ -6,16 +6,18 @@ import { getUserFromToken } from "@/lib/auth"
 
 export default function AdminPage() {
   const router = useRouter()
+  const [user, setUser] = useState(null)
   const [users, setUsers] = useState([])
   const [posts, setPosts] = useState([])
   const [error, setError] = useState("")
-  const user = getUserFromToken()
 
   useEffect(() => {
-    if (!user || user.role !== "admin") {
+    const storedUser = getUserFromToken()
+    if (!storedUser || storedUser.role !== "admin") {
       router.push("/")
       return
     }
+    setUser(storedUser) // ✅ set user once confirmed
 
     const fetchData = async () => {
       try {
@@ -33,19 +35,7 @@ export default function AdminPage() {
     fetchData()
   }, [])
 
-  const deleteUser = async (id) => {
-    if (confirm("Are you sure you want to delete this user?")) {
-      await axios.delete(`/users/${id}`)
-      setUsers(users.filter((u) => u._id !== id))
-    }
-  }
-
-  const deletePost = async (id) => {
-    if (confirm("Delete this post?")) {
-      await axios.delete(`/posts/${id}`)
-      setPosts(posts.filter((p) => p._id !== id))
-    }
-  }
+  if (!user) return null // or show loading
 
   return (
     <div className="max-w-4xl mx-auto bg-white shadow p-6 mt-6 rounded">
