@@ -1,20 +1,20 @@
-"use client"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+"use client";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function Navbar() {
-  const [token, setToken] = useState("")
-  const router = useRouter()
+  const [token, setToken] = useState("");
+  const router = useRouter();
 
   useEffect(() => {
-    setToken(localStorage.getItem("token"))
-  }, [])
+    setToken(localStorage.getItem("token"));
+  }, []);
 
   const logout = () => {
-    localStorage.removeItem("token")
-    router.push("/")
-  }
+    localStorage.removeItem("token");
+    router.push("/");
+  };
 
   return (
     <nav className="bg-white shadow p-4 flex justify-between items-center">
@@ -28,11 +28,16 @@ export default function Navbar() {
             <Link href="/register">Register</Link>
           </>
         ) : (
-          <button onClick={logout} className="text-red-500 font-medium">
-            Logout
-          </button>
+          <>
+            <Link href="/create-post" className="text-green-600 font-medium">
+              + New Post
+            </Link>
+            <button onClick={logout} className="text-red-500 font-medium">
+              Logout
+            </button>
+          </>
         )}
       </div>
     </nav>
-  )
+  );
 }
