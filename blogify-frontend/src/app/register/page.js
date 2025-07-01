@@ -2,6 +2,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import axios from "@/lib/api"
+import Link from "next/link"
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -9,59 +10,235 @@ export default function RegisterPage() {
     name: "",
     email: "",
     password: "",
+    confirmPassword: ""
   })
   const [error, setError] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+  const [passwordStrength, setPasswordStrength] = useState(0)
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value })
+    setError("")
+    const { name, value } = e.target
+    setFormData(prev => ({ ...prev, [name]: value }))
+
+    // Calculate password strength when password changes
+    if (name === "password") {
+      calculatePasswordStrength(value)
+    }
+  }
+
+  const calculatePasswordStrength = (password) => {
+    let strength = 0
+    if (password.length >= 8) strength += 1
+    if (/[A-Z]/.test(password)) strength += 1
+    if (/[0-9]/.test(password)) strength += 1
+    if (/[^A-Za-z0-9]/.test(password)) strength += 1
+    setPasswordStrength(strength)
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    if (isLoading) return
+
+    // Validate password match
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match")
+      return
+    }
+
+    // Validate password strength
+    if (passwordStrength < 3) {
+      setError("Password is too weak. Please use a stronger password.")
+      return
+    }
+
+    setIsLoading(true)
+    setError("")
+
     try {
-      await axios.post("/auth/register", formData)
-      router.push("/login")
+      await axios.post("/auth/register", {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password
+      })
+      router.push("/login?registered=true")
     } catch (err) {
-      setError(err.response?.data?.message || "Something went wrong")
+      setError(err.response?.data?.message || "Registration failed. Please try again.")
+      console.error("Registration error:", err)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const getPasswordStrengthColor = () => {
+    switch(passwordStrength) {
+      case 0: return "bg-[#efa3a0]"
+      case 1: return "bg-[#efa3a0]"
+      case 2: return "bg-[#ffdec7]"
+      case 3: return "bg-[#8b597b]"
+      case 4: return "bg-[#493129]"
+      default: return "bg-[#ffdec7]"
     }
   }
 
   return (
-    <div className="bg-white p-6 rounded shadow max-w-md mx-auto mt-10">
-      <h2 className="text-2xl font-bold mb-4 text-center">Register</h2>
-      {error && <p className="text-red-500 mb-4">{error}</p>}
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          type="text"
-          name="name"
-          placeholder="Full Name"
-          className="w-full border p-2 rounded"
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          className="w-full border p-2 rounded"
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          className="w-full border p-2 rounded"
-          onChange={handleChange}
-          required
-        />
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700"
-        >
-          Register
-        </button>
-      </form>
+    <div className="min-h-screen flex items-center justify-center bg-[#ffeedb] p-4">
+      <div className="bg-[#ffdec7] p-8 rounded-lg shadow-lg border border-[#efa3a0]/30 w-full max-w-md">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold text-[#493129]">Create Account</h2>
+          <p className="text-[#8b597b] mt-2">Join the Blogify community</p>
+        </div>
+
+        {error && (
+          <div className="bg-[#efa3a0] text-[#493129] p-3 rounded-md mb-6 text-center">
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label htmlFor="name" className="block text-sm font-medium text-[#493129] mb-1">
+              Full Name
+            </label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              placeholder="Your full name"
+              className="w-full px-4 py-3 rounded-lg border border-[#efa3a0] focus:outline-none focus:ring-2 focus:ring-[#8b597b] focus:border-transparent bg-[#ffeedb] text-[#493129]"
+              onChange={handleChange}
+              required
+              autoComplete="name"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-[#493129] mb-1">
+              Email Address
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="your@email.com"
+              className="w-full px-4 py-3 rounded-lg border border-[#efa3a0] focus:outline-none focus:ring-2 focus:ring-[#8b597b] focus:border-transparent bg-[#ffeedb] text-[#493129]"
+              onChange={handleChange}
+              required
+              autoComplete="email"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-[#493129] mb-1">
+              Password
+            </label>
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                name="password"
+                placeholder="••••••••"
+                className="w-full px-4 py-3 rounded-lg border border-[#efa3a0] focus:outline-none focus:ring-2 focus:ring-[#8b597b] focus:border-transparent bg-[#ffeedb] text-[#493129] pr-12"
+                onChange={handleChange}
+                required
+                autoComplete="new-password"
+              />
+              <button
+                type="button"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#8b597b] hover:text-[#493129]"
+                onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? (
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                  </svg>
+                ) : (
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                )}
+              </button>
+            </div>
+            <div className="mt-2">
+              <div className="flex gap-1 h-1">
+                {[...Array(4)].map((_, i) => (
+                  <div 
+                    key={i} 
+                    className={`flex-1 rounded-full ${i < passwordStrength ? getPasswordStrengthColor() : "bg-[#ffdec7]"}`}
+                  ></div>
+                ))}
+              </div>
+              <p className="text-xs text-[#8b597b] mt-1">
+                {passwordStrength < 2 ? "Weak" : 
+                 passwordStrength < 4 ? "Good" : "Strong"} password
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor="confirmPassword" className="block text-sm font-medium text-[#493129] mb-1">
+              Confirm Password
+            </label>
+            <input
+              type={showPassword ? "text" : "password"}
+              id="confirmPassword"
+              name="confirmPassword"
+              placeholder="••••••••"
+              className="w-full px-4 py-3 rounded-lg border border-[#efa3a0] focus:outline-none focus:ring-2 focus:ring-[#8b597b] focus:border-transparent bg-[#ffeedb] text-[#493129]"
+              onChange={handleChange}
+              required
+              autoComplete="new-password"
+            />
+          </div>
+
+          <div className="flex items-center">
+            <input
+              id="terms"
+              name="terms"
+              type="checkbox"
+              className="h-4 w-4 text-[#8b597b] focus:ring-[#8b597b] border-[#efa3a0] rounded"
+              required
+            />
+            <label htmlFor="terms" className="ml-2 block text-sm text-[#493129]">
+              I agree to the <Link href="/terms" className="text-[#8b597b] hover:underline">Terms and Conditions</Link>
+            </label>
+          </div>
+
+          <button
+            type="submit"
+            disabled={isLoading}
+            className={`w-full py-3 px-4 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center ${
+              isLoading
+                ? "bg-[#8b597b]/70 text-[#ffeedb] cursor-not-allowed"
+                : "bg-[#8b597b] text-[#ffeedb] hover:bg-[#493129]"
+            }`}
+          >
+            {isLoading ? (
+              <>
+                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Creating account...
+              </>
+            ) : (
+              "Create Account"
+            )}
+          </button>
+        </form>
+
+        <div className="mt-6 text-center">
+          <p className="text-sm text-[#493129]">
+            Already have an account?{" "}
+            <Link href="/login" className="font-medium text-[#8b597b] hover:text-[#493129]">
+              Sign in
+            </Link>
+          </p>
+        </div>
+      </div>
     </div>
   )
 }
