@@ -3,6 +3,7 @@ import { useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
 import axios from "@/lib/api"
 import CommentForm from "@/components/CommentForm"
+import { Sparkles } from "lucide-react"
 
 export default function PostDetailPage() {
   const { postId } = useParams()
@@ -13,6 +14,11 @@ export default function PostDetailPage() {
   const [token, setToken] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isCommentsLoading, setIsCommentsLoading] = useState(true)
+  const [isSummaryLoading, setIsSummaryLoading] = useState(false)
+  const [summary, setSummary] = useState("")
+  const [showSummary, setShowSummary] = useState(false)
+  const [typedSummary, setTypedSummary] = useState("")
+  const [typingIndex, setTypingIndex] = useState(0)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -36,6 +42,52 @@ export default function PostDetailPage() {
     fetchData()
     setToken(localStorage.getItem("token"))
   }, [postId])
+
+  useEffect(() => {
+    if (summary && showSummary) {
+      setTypedSummary("")
+      setTypingIndex(0)
+    }
+  }, [summary, showSummary])
+
+  useEffect(() => {
+    if (typingIndex < summary.length && showSummary) {
+      const timeout = setTimeout(() => {
+        setTypedSummary(prev => prev + summary[typingIndex])
+        setTypingIndex(prev => prev + 1)
+      }, 20) // Adjust typing speed here
+
+      return () => clearTimeout(timeout)
+    }
+  }, [typingIndex, summary, showSummary])
+
+  const handleSummaryClick = async () => {
+    if (showSummary) {
+      setShowSummary(false)
+      return
+    }
+
+    setIsSummaryLoading(true)
+    setShowSummary(true)
+    try {
+      const response = await fetch("http://localhost:8000/api/summary", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          content: post.content
+        })
+      })
+      const data = await response.json()
+      setSummary(data.summary)
+    } catch (err) {
+      console.error("Failed to generate summary:", err)
+      setSummary("Failed to generate summary. Please try again.")
+    } finally {
+      setIsSummaryLoading(false)
+    }
+  }
 
   if (error) return (
     <div className="max-w-4xl mx-auto p-6">
@@ -78,7 +130,40 @@ export default function PostDetailPage() {
           />
         </div>
         
-        <h1 className="text-3xl font-bold text-[#493129] mb-4">{post.title}</h1>
+        <div className="flex justify-between items-start">
+          <h1 className="text-3xl font-bold text-[#493129] mb-4">{post.title}</h1>
+          <button
+            onClick={handleSummaryClick}
+            disabled={isSummaryLoading}
+            className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200 ${showSummary ? 'bg-[#8b597b] text-[#ffeedb]' : 'bg-[#ffdec7] text-[#493129] hover:bg-[#efa3a0]'}`}
+            aria-label="Generate AI Summary"
+          >
+            <Sparkles size={18} className={isSummaryLoading ? "animate-pulse" : ""} />
+            <span className="hidden sm:inline">AI Summary</span>
+          </button>
+        </div>
+
+        {showSummary && (
+          <div className="mb-6 p-4 bg-[#493129] text-[#ffeedb] rounded-lg">
+            <div className="flex items-center gap-2 mb-2">
+              <Sparkles size={16} />
+              <h3 className="font-medium">AI-Generated Summary</h3>
+            </div>
+            {isSummaryLoading ? (
+              <div className="space-y-2">
+                <div className="h-4 w-full bg-[#8b597b] rounded animate-pulse"></div>
+                <div className="h-4 w-3/4 bg-[#8b597b] rounded animate-pulse"></div>
+              </div>
+            ) : (
+              <p className="whitespace-pre-wrap">
+                {typedSummary}
+                {typingIndex < summary.length && (
+                  <span className="ml-1 inline-block w-2 h-4 bg-[#ffeedb] animate-blink"></span>
+                )}
+              </p>
+            )}
+          </div>
+        )}
         
         <div className="prose max-w-none text-[#493129] mb-6">
           {post.content.split('\n').map((paragraph, i) => (
