@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import axios from "@/lib/api"
+import { Sparkle } from "lucide-react"
 
 export default function CreatePostPage() {
   const router = useRouter()
@@ -14,6 +15,8 @@ export default function CreatePostPage() {
   const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [previewImage, setPreviewImage] = useState(null)
+  const [suggestedTitles, setSuggestedTitles] = useState([])
+  const [isSuggesting, setIsSuggesting] = useState(false)
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token")
@@ -75,6 +78,33 @@ export default function CreatePostPage() {
     }
   }
 
+  const suggestTitle = async () => {
+    if (!formData.content.trim()) {
+      setError("Please enter some content to suggest a title")
+      return
+    }
+
+    setIsSuggesting(true)
+    setError("")
+    
+    try {
+      const response = await axios.post("http://localhost:8000/api/title-suggestion", {
+        content: formData.content
+      })
+      setSuggestedTitles([response.data.title])
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to suggest title. Please try again.")
+      console.error("Title suggestion error:", err)
+    } finally {
+      setIsSuggesting(false)
+    }
+  }
+
+  const selectTitle = (title) => {
+    setFormData({ ...formData, title })
+    setSuggestedTitles([])
+  }
+
   return (
     <div className="min-h-screen bg-[#ffeedb] py-8 px-4">
       <div className="max-w-3xl mx-auto bg-[#ffdec7] p-8 rounded-lg shadow-lg border border-[#efa3a0]/30">
@@ -88,18 +118,65 @@ export default function CreatePostPage() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label htmlFor="title" className="block text-sm font-medium text-[#493129] mb-1">
-              Post Title
-            </label>
+            <div className="flex justify-between items-center mb-1">
+              <label htmlFor="title" className="block text-sm font-medium text-[#493129]">
+                Post Title
+              </label>
+              {formData.content.trim() && (
+                <button
+                  type="button"
+                  onClick={suggestTitle}
+                  disabled={isSuggesting}
+                  className={`text-xs font-medium flex items-center gap-1 px-3 py-1.5 rounded-lg border border-[#8b597b]/40 bg-[#f7e6ff] text-[#8b597b] hover:bg-[#e9d6fa] transition-colors duration-200 shadow-sm ${
+                    isSuggesting ? "opacity-60 cursor-not-allowed" : ""
+                  }`}
+                  title="Suggest AI Title"
+                >
+                  <Sparkle className="w-4 h-4 mr-1 text-[#8b597b]" />
+                  {isSuggesting ? (
+                    <>
+                      <svg className="animate-spin -ml-1 mr-1 h-3 w-3 text-[#8b597b]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Suggesting...
+                    </>
+                  ) : (
+                    <>
+                      Suggest Title
+                      <span className="ml-1 text-[10px] font-semibold bg-[#8b597b]/10 px-2 py-0.5 rounded">AI</span>
+                    </>
+                  )}
+                </button>
+              )}
+            </div>
             <input
               type="text"
               id="title"
               name="title"
+              value={formData.title}
               placeholder="An interesting title..."
               className="w-full px-4 py-3 rounded-lg border border-[#efa3a0] focus:outline-none focus:ring-2 focus:ring-[#8b597b] focus:border-transparent bg-[#ffeedb] text-[#493129]"
               onChange={handleChange}
               required
             />
+            {suggestedTitles.length > 0 && (
+              <div className="mt-2 space-y-2">
+                <p className="text-xs text-[#493129]/80">Tap to select a title:</p>
+                <div className="flex flex-wrap gap-2">
+                  {suggestedTitles.map((title, index) => (
+                    <button
+                      key={index}
+                      type="button"
+                      onClick={() => selectTitle(title)}
+                      className="px-3 py-1.5 text-sm bg-[#8b597b]/10 hover:bg-[#8b597b]/20 text-[#493129] rounded-lg transition-colors duration-200 border border-[#8b597b]/30"
+                    >
+                      {title}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           <div>
