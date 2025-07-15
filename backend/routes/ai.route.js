@@ -1,5 +1,5 @@
 const express = require('express');
-const { generateSummary, suggestTitle } = require('../controllers/aiController');
+const { generateSummary, suggestTitle, correctGrammar } = require('../controllers/aiController');
 
 const router = express.Router();
 
@@ -73,7 +73,46 @@ const router = express.Router();
  *         description: Failed to generate title
  */
 
+
+/**
+ * @swagger
+ * /api/grammar-correct:
+ *   post:
+ *     summary: Correct grammar and improve content fluency using AI
+ *     tags: [AI]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - content
+ *             properties:
+ *               content:
+ *                 type: string
+ *                 description: The blog content to correct
+ *     responses:
+ *       200:
+ *         description: Corrected content returned
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 corrected:
+ *                   type: string
+ *                   description: The AI-corrected blog content
+ *       400:
+ *         description: Content is required
+ *       500:
+ *         description: Failed to correct grammar
+ */
+
+
+
 router.post('/summary', generateSummary);
 router.post('/title-suggestion', suggestTitle);
+router.post('/grammar-correct', correctGrammar);
 
 module.exports = router;

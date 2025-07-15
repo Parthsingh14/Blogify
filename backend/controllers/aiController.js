@@ -1,6 +1,8 @@
 const axios = require("axios");
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const suggestBlogTitle = require('../services/aiServices'); // Adjust the path as necessary
+const correctGrammer = require('../services/aiGrammer');
+
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
@@ -47,5 +49,21 @@ module.exports.suggestTitle = async (req, res) => {
   } catch (error) {
     console.error("❌ Gemini Error:", error);
     res.status(500).json({ error: 'Failed to generate title' });
+  }
+};
+
+module.exports.correctGrammar = async (req, res) => {
+  const { content } = req.body;
+
+  if (!content) {
+    return res.status(400).json({ error: 'Content is required for grammar correction' });
+  }
+
+  try {
+    const corrected = await correctGrammer(content);
+    res.status(200).json({ corrected });
+  } catch (error) {
+    console.error("❌ Grammar Correction Error:", error);
+    res.status(500).json({ error: 'Failed to correct grammar' });
   }
 };
