@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import axios from "@/lib/api"
-import { Sparkle } from "lucide-react"
+import { Sparkle, Wand2 } from "lucide-react"
 
 export default function CreatePostPage() {
   const router = useRouter()
@@ -17,6 +17,7 @@ export default function CreatePostPage() {
   const [previewImage, setPreviewImage] = useState(null)
   const [suggestedTitles, setSuggestedTitles] = useState([])
   const [isSuggesting, setIsSuggesting] = useState(false)
+  const [isCheckingGrammar, setIsCheckingGrammar] = useState(false)
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token")
@@ -33,7 +34,6 @@ export default function CreatePostPage() {
       const file = files[0]
       setFormData({ ...formData, image: file })
       
-      // Create image preview
       if (file) {
         const reader = new FileReader()
         reader.onloadend = () => {
@@ -97,6 +97,28 @@ export default function CreatePostPage() {
       console.error("Title suggestion error:", err)
     } finally {
       setIsSuggesting(false)
+    }
+  }
+
+  const checkGrammar = async () => {
+    if (!formData.content.trim()) {
+      setError("Please enter some content to check grammar")
+      return
+    }
+
+    setIsCheckingGrammar(true)
+    setError("")
+    
+    try {
+      const response = await axios.post("http://localhost:8000/api/grammar-correct", {
+        content: formData.content
+      })
+      setFormData({ ...formData, content: response.data.corrected })
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to check grammar. Please try again.")
+      console.error("Grammar check error:", err)
+    } finally {
+      setIsCheckingGrammar(false)
     }
   }
 
@@ -180,9 +202,38 @@ export default function CreatePostPage() {
           </div>
 
           <div>
-            <label htmlFor="content" className="block text-sm font-medium text-[#493129] mb-1">
-              Post Content
-            </label>
+            <div className="flex justify-between items-center mb-1">
+              <label htmlFor="content" className="block text-sm font-medium text-[#493129]">
+                Post Content
+              </label>
+              {formData.content.trim() && (
+                <button
+                  type="button"
+                  onClick={checkGrammar}
+                  disabled={isCheckingGrammar}
+                  className={`text-xs font-medium flex items-center gap-1 px-3 py-1.5 rounded-lg border border-[#5a8b7d]/40 bg-[#e6fff7] text-[#5a8b7d] hover:bg-[#d6fae9] transition-colors duration-200 shadow-sm ${
+                    isCheckingGrammar ? "opacity-60 cursor-not-allowed" : ""
+                  }`}
+                  title="Check Grammar"
+                >
+                  <Wand2 className="w-4 h-4 mr-1 text-[#5a8b7d]" />
+                  {isCheckingGrammar ? (
+                    <>
+                      <svg className="animate-spin -ml-1 mr-1 h-3 w-3 text-[#5a8b7d]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Checking...
+                    </>
+                  ) : (
+                    <>
+                      Check Grammar
+                      <span className="ml-1 text-[10px] font-semibold bg-[#5a8b7d]/10 px-2 py-0.5 rounded">AI</span>
+                    </>
+                  )}
+                </button>
+              )}
+            </div>
             <textarea
               id="content"
               name="content"
@@ -190,6 +241,7 @@ export default function CreatePostPage() {
               placeholder="Write your post content here..."
               className="w-full px-4 py-3 rounded-lg border border-[#efa3a0] focus:outline-none focus:ring-2 focus:ring-[#8b597b] focus:border-transparent bg-[#ffeedb] text-[#493129]"
               onChange={handleChange}
+              value={formData.content}
               required
             ></textarea>
           </div>
