@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import axios from "@/lib/api"
-import { Sparkle, Wand2 } from "lucide-react"
+import { Sparkle, Wand2, ArrowLeft } from "lucide-react"
 
 export default function CreatePostPage() {
   const router = useRouter()
@@ -127,21 +127,36 @@ export default function CreatePostPage() {
     setSuggestedTitles([])
   }
 
+  const handleCancel = () => {
+    router.push("/")
+  }
+
   return (
-    <div className="min-h-screen bg-[#ffeedb] py-8 px-4">
-      <div className="max-w-3xl mx-auto bg-[#ffdec7] p-8 rounded-lg shadow-lg border border-[#efa3a0]/30">
-        <h2 className="text-3xl font-bold text-[#493129] mb-6 text-center">Create New Post</h2>
+    <div className="min-h-screen py-8 px-4 backdrop-blur-sm bg-[rgba(255,255,255,0.05)]">
+      <div className="max-w-3xl mx-auto backdrop-blur-lg bg-[rgba(255,255,255,0.1)] p-8 rounded-xl shadow-lg border border-[rgba(161,98,232,0.3)]">
+        {/* Back Button */}
+        <button
+          onClick={() => router.back()}
+          className="flex items-center gap-2 mb-6 text-[#121212] hover:text-[#a162e8] transition-colors duration-300"
+        >
+          <ArrowLeft className="w-5 h-5" />
+          <span>Back</span>
+        </button>
+
+        <h2 className="text-3xl font-bold text-[#121212] mb-6 text-center bg-gradient-to-r from-[#a162e8] to-[#08e8de] bg-clip-text text-transparent">
+          Create New Post
+        </h2>
         
         {error && (
-          <div className="bg-[#efa3a0] text-[#493129] p-3 rounded-md mb-6 text-center">
+          <div className="backdrop-blur-sm bg-[rgba(161,98,232,0.2)] text-[#121212] p-4 rounded-xl mb-6 text-center border border-[rgba(161,98,232,0.3)]">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <div className="flex justify-between items-center mb-1">
-              <label htmlFor="title" className="block text-sm font-medium text-[#493129]">
+            <div className="flex justify-between items-center mb-2">
+              <label htmlFor="title" className="block text-sm font-medium text-[#121212]">
                 Post Title
               </label>
               {formData.content.trim() && (
@@ -149,25 +164,21 @@ export default function CreatePostPage() {
                   type="button"
                   onClick={suggestTitle}
                   disabled={isSuggesting}
-                  className={`text-xs font-medium flex items-center gap-1 px-3 py-1.5 rounded-lg border border-[#8b597b]/40 bg-[#f7e6ff] text-[#8b597b] hover:bg-[#e9d6fa] transition-colors duration-200 shadow-sm ${
-                    isSuggesting ? "opacity-60 cursor-not-allowed" : ""
+                  className={`text-xs font-medium flex items-center gap-1 px-3 py-2 rounded-xl transition-all duration-300 ${
+                    isSuggesting
+                      ? "bg-[rgba(161,98,232,0.2)] text-[#121212]/60 cursor-not-allowed border border-[rgba(161,98,232,0.3)]"
+                      : "bg-[rgba(161,98,232,0.2)] hover:bg-[rgba(161,98,232,0.3)] text-[#121212] border border-[rgba(161,98,232,0.3)] hover:shadow-[0_0_10px_rgba(161,98,232,0.3)]"
                   }`}
                   title="Suggest AI Title"
                 >
-                  <Sparkle className="w-4 h-4 mr-1 text-[#8b597b]" />
+                  <Sparkle className="w-4 h-4" />
                   {isSuggesting ? (
-                    <>
-                      <svg className="animate-spin -ml-1 mr-1 h-3 w-3 text-[#8b597b]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      Suggesting...
-                    </>
+                    <span className="flex items-center gap-1">
+                      <span className="inline-block w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin"></span>
+                      Thinking...
+                    </span>
                   ) : (
-                    <>
-                      Suggest Title
-                      <span className="ml-1 text-[10px] font-semibold bg-[#8b597b]/10 px-2 py-0.5 rounded">AI</span>
-                    </>
+                    "Suggest Title"
                   )}
                 </button>
               )}
@@ -178,20 +189,20 @@ export default function CreatePostPage() {
               name="title"
               value={formData.title}
               placeholder="An interesting title..."
-              className="w-full px-4 py-3 rounded-lg border border-[#efa3a0] focus:outline-none focus:ring-2 focus:ring-[#8b597b] focus:border-transparent bg-[#ffeedb] text-[#493129]"
+              className="w-full px-4 py-3 rounded-xl backdrop-blur-sm bg-[rgba(255,255,255,0.1)] border border-[rgba(161,98,232,0.3)] focus:outline-none focus:ring-2 focus:ring-[#a162e8] focus:border-transparent text-[#121212] placeholder-[rgba(18,18,18,0.6)] transition-all duration-300 hover:border-[#08e8de]"
               onChange={handleChange}
               required
             />
             {suggestedTitles.length > 0 && (
-              <div className="mt-2 space-y-2">
-                <p className="text-xs text-[#493129]/80">Tap to select a title:</p>
+              <div className="mt-3 space-y-2">
+                <p className="text-xs text-[#555]">Suggested titles:</p>
                 <div className="flex flex-wrap gap-2">
                   {suggestedTitles.map((title, index) => (
                     <button
                       key={index}
                       type="button"
                       onClick={() => selectTitle(title)}
-                      className="px-3 py-1.5 text-sm bg-[#8b597b]/10 hover:bg-[#8b597b]/20 text-[#493129] rounded-lg transition-colors duration-200 border border-[#8b597b]/30"
+                      className="px-3 py-1.5 text-sm backdrop-blur-sm bg-[rgba(161,98,232,0.1)] hover:bg-[rgba(161,98,232,0.2)] text-[#121212] rounded-lg transition-all duration-300 border border-[rgba(161,98,232,0.3)] hover:shadow-[0_0_8px_rgba(161,98,232,0.2)]"
                     >
                       {title}
                     </button>
@@ -202,8 +213,8 @@ export default function CreatePostPage() {
           </div>
 
           <div>
-            <div className="flex justify-between items-center mb-1">
-              <label htmlFor="content" className="block text-sm font-medium text-[#493129]">
+            <div className="flex justify-between items-center mb-2">
+              <label htmlFor="content" className="block text-sm font-medium text-[#121212]">
                 Post Content
               </label>
               {formData.content.trim() && (
@@ -211,25 +222,21 @@ export default function CreatePostPage() {
                   type="button"
                   onClick={checkGrammar}
                   disabled={isCheckingGrammar}
-                  className={`text-xs font-medium flex items-center gap-1 px-3 py-1.5 rounded-lg border border-[#5a8b7d]/40 bg-[#e6fff7] text-[#5a8b7d] hover:bg-[#d6fae9] transition-colors duration-200 shadow-sm ${
-                    isCheckingGrammar ? "opacity-60 cursor-not-allowed" : ""
+                  className={`text-xs font-medium flex items-center gap-1 px-3 py-2 rounded-xl transition-all duration-300 ${
+                    isCheckingGrammar
+                      ? "bg-[rgba(8,232,222,0.2)] text-[#121212]/60 cursor-not-allowed border border-[rgba(8,232,222,0.3)]"
+                      : "bg-[rgba(8,232,222,0.2)] hover:bg-[rgba(8,232,222,0.3)] text-[#121212] border border-[rgba(8,232,222,0.3)] hover:shadow-[0_0_10px_rgba(8,232,222,0.3)]"
                   }`}
                   title="Check Grammar"
                 >
-                  <Wand2 className="w-4 h-4 mr-1 text-[#5a8b7d]" />
+                  <Wand2 className="w-4 h-4" />
                   {isCheckingGrammar ? (
-                    <>
-                      <svg className="animate-spin -ml-1 mr-1 h-3 w-3 text-[#5a8b7d]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
+                    <span className="flex items-center gap-1">
+                      <span className="inline-block w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin"></span>
                       Checking...
-                    </>
+                    </span>
                   ) : (
-                    <>
-                      Check Grammar
-                      <span className="ml-1 text-[10px] font-semibold bg-[#5a8b7d]/10 px-2 py-0.5 rounded">AI</span>
-                    </>
+                    "Check Grammar"
                   )}
                 </button>
               )}
@@ -239,7 +246,7 @@ export default function CreatePostPage() {
               name="content"
               rows="8"
               placeholder="Write your post content here..."
-              className="w-full px-4 py-3 rounded-lg border border-[#efa3a0] focus:outline-none focus:ring-2 focus:ring-[#8b597b] focus:border-transparent bg-[#ffeedb] text-[#493129]"
+              className="w-full px-4 py-3 rounded-xl backdrop-blur-sm bg-[rgba(255,255,255,0.1)] border border-[rgba(161,98,232,0.3)] focus:outline-none focus:ring-2 focus:ring-[#a162e8] focus:border-transparent text-[#121212] placeholder-[rgba(18,18,18,0.6)] transition-all duration-300 hover:border-[#08e8de]"
               onChange={handleChange}
               value={formData.content}
               required
@@ -248,13 +255,13 @@ export default function CreatePostPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label htmlFor="category" className="block text-sm font-medium text-[#493129] mb-1">
+              <label htmlFor="category" className="block text-sm font-medium text-[#121212] mb-2">
                 Category
               </label>
               <select
                 id="category"
                 name="category"
-                className="w-full px-4 py-3 rounded-lg border border-[#efa3a0] focus:outline-none focus:ring-2 focus:ring-[#8b597b] focus:border-transparent bg-[#ffeedb] text-[#493129]"
+                className="w-full px-4 py-3 rounded-xl backdrop-blur-sm bg-[rgba(255,255,255,0.1)] border border-[rgba(161,98,232,0.3)] focus:outline-none focus:ring-2 focus:ring-[#a162e8] focus:border-transparent text-[#121212] transition-all duration-300 hover:border-[#08e8de]"
                 onChange={handleChange}
                 value={formData.category}
               >
@@ -267,7 +274,7 @@ export default function CreatePostPage() {
             </div>
 
             <div>
-              <label htmlFor="image" className="block text-sm font-medium text-[#493129] mb-1">
+              <label htmlFor="image" className="block text-sm font-medium text-[#121212] mb-2">
                 Cover Image
               </label>
               <div className="flex flex-col items-start gap-3">
@@ -276,11 +283,11 @@ export default function CreatePostPage() {
                   id="image"
                   name="image"
                   accept="image/*"
-                  className="block w-full text-sm text-[#493129] file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-[#8b597b] file:text-[#ffeedb] hover:file:bg-[#493129] transition-colors duration-200"
+                  className="block w-full text-sm text-[#121212] file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-medium file:bg-gradient-to-r file:from-[#a162e8] file:to-[#08e8de] file:text-[#121212] hover:file:shadow-[0_0_10px_rgba(161,98,232,0.3)] transition-all duration-300"
                   onChange={handleChange}
                 />
                 {previewImage && (
-                  <div className="mt-2 w-full h-40 rounded-lg overflow-hidden border border-[#efa3a0]">
+                  <div className="mt-2 w-full h-40 rounded-xl overflow-hidden border border-[rgba(161,98,232,0.3)]">
                     <img 
                       src={previewImage} 
                       alt="Preview" 
@@ -292,27 +299,34 @@ export default function CreatePostPage() {
             </div>
           </div>
 
-          <button
-            type="submit"
-            disabled={isLoading}
-            className={`w-full py-3 px-4 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center ${
-              isLoading
-                ? "bg-[#8b597b]/70 text-[#ffeedb] cursor-not-allowed"
-                : "bg-[#8b597b] text-[#ffeedb] hover:bg-[#493129]"
-            }`}
-          >
-            {isLoading ? (
-              <>
-                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Publishing...
-              </>
-            ) : (
-              "Publish Post"
-            )}
-          </button>
+          <div className="flex justify-end gap-4">
+            <button
+              type="button"
+              onClick={handleCancel}
+              disabled={isLoading}
+              className="px-6 py-3 rounded-xl font-medium transition-all duration-300 bg-[rgba(255,255,255,0.1)] hover:bg-[rgba(255,255,255,0.2)] text-[#121212] border border-[rgba(161,98,232,0.3)] hover:border-[#a162e8] hover:shadow-[0_0_10px_rgba(161,98,232,0.2)]"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className={`px-6 py-3 rounded-xl font-medium transition-all duration-300 flex items-center justify-center ${
+                isLoading
+                  ? "bg-gradient-to-r from-[#a162e8]/60 to-[#08e8de]/60 text-[#121212]/70 cursor-not-allowed"
+                  : "bg-gradient-to-r from-[#a162e8] to-[#08e8de] text-[#121212] hover:shadow-[0_0_20px_rgba(161,98,232,0.5)] hover:scale-[1.02]"
+              }`}
+            >
+              {isLoading ? (
+                <>
+                  <span className="inline-block w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin mr-2"></span>
+                  Publishing...
+                </>
+              ) : (
+                "Publish Post"
+              )}
+            </button>
+          </div>
         </form>
       </div>
     </div>

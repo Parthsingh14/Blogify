@@ -3,6 +3,7 @@ import { useEffect, useState } from "react"
 import axios from "@/lib/api"
 import { useRouter } from "next/navigation"
 import { getUserFromToken } from "@/lib/auth"
+import { ArrowLeft } from "lucide-react"
 
 export default function AdminPage() {
   const router = useRouter()
@@ -71,21 +72,21 @@ export default function AdminPage() {
   }
 
   if (!user) return (
-    <div className="min-h-screen flex items-center justify-center bg-[#ffeedb]">
-      <div className="bg-[#ffdec7] p-8 rounded-lg shadow-lg border border-[#efa3a0]/30 text-center">
-        <p className="text-[#493129]">Verifying admin access...</p>
+    <div className="min-h-screen flex items-center justify-center backdrop-blur-sm bg-[rgba(255,255,255,0.05)]">
+      <div className="backdrop-blur-lg bg-[rgba(255,255,255,0.1)] p-8 rounded-xl shadow-lg border border-[rgba(161,98,232,0.3)] text-center">
+        <p className="text-[#121212]">Verifying admin access...</p>
       </div>
     </div>
   )
 
   if (isLoading) return (
-    <div className="min-h-screen bg-[#ffeedb] p-8">
-      <div className="max-w-4xl mx-auto bg-[#ffdec7] p-6 rounded-lg shadow-lg border border-[#efa3a0]/30">
+    <div className="min-h-screen backdrop-blur-sm bg-[rgba(255,255,255,0.05)] p-8">
+      <div className="max-w-6xl mx-auto backdrop-blur-lg bg-[rgba(255,255,255,0.1)] p-6 rounded-xl shadow-lg border border-[rgba(161,98,232,0.3)]">
         <div className="animate-pulse space-y-6">
-          <div className="h-8 w-1/3 bg-[#efa3a0] rounded"></div>
-          <div className="h-6 w-full bg-[#ffdec7] rounded"></div>
+          <div className="h-8 w-1/3 bg-[rgba(161,98,232,0.2)] rounded-full"></div>
+          <div className="h-6 w-full bg-[rgba(161,98,232,0.1)] rounded-full"></div>
           {[...Array(5)].map((_, i) => (
-            <div key={i} className="h-12 w-full bg-[#ffdec7] rounded-lg"></div>
+            <div key={i} className="h-12 w-full bg-[rgba(161,98,232,0.1)] rounded-xl"></div>
           ))}
         </div>
       </div>
@@ -93,40 +94,62 @@ export default function AdminPage() {
   )
 
   return (
-    <div className="min-h-screen bg-[#ffeedb] p-4 md:p-8">
-      <div className="max-w-6xl mx-auto bg-[#ffdec7] rounded-lg shadow-lg border border-[#efa3a0]/30 overflow-hidden">
-        <div className="p-6 border-b border-[#efa3a0]/30">
-          <h2 className="text-3xl font-bold text-[#493129]">Admin Dashboard</h2>
-          <p className="text-[#8b597b]">Welcome back, {user.name}</p>
+    <div className="min-h-screen backdrop-blur-sm bg-[rgba(255,255,255,0.05)] p-4 md:p-8">
+      <div className="max-w-6xl mx-auto backdrop-blur-lg bg-[rgba(255,255,255,0.1)] rounded-xl shadow-lg border border-[rgba(161,98,232,0.3)] overflow-hidden">
+        {/* Header */}
+        <div className="p-6 border-b border-[rgba(161,98,232,0.3)] flex items-start justify-between">
+          <div>
+            <button
+              onClick={() => router.back()}
+              className="flex items-center gap-2 mb-4 text-[#121212] hover:text-[#a162e8] transition-colors duration-300"
+            >
+              <ArrowLeft className="w-5 h-5" />
+              <span>Back</span>
+            </button>
+            <h2 className="text-3xl font-bold text-[#121212] bg-gradient-to-r from-[#a162e8] to-[#08e8de] bg-clip-text text-transparent">
+              Admin Dashboard
+            </h2>
+            <p className="text-[#555]">Welcome back, {user.name}</p>
+          </div>
         </div>
 
         {error && (
-          <div className="bg-[#efa3a0] text-[#493129] p-3 mx-6 mt-4 rounded-md text-center">
+          <div className="backdrop-blur-sm bg-[rgba(161,98,232,0.2)] text-[#121212] p-4 mx-6 mt-4 rounded-xl text-center border border-[rgba(161,98,232,0.3)]">
             {error}
           </div>
         )}
 
-        <div className="border-b border-[#efa3a0]/30">
+        {/* Tabs */}
+        <div className="border-b border-[rgba(161,98,232,0.3)]">
           <nav className="flex">
             <button
               onClick={() => setActiveTab("users")}
-              className={`px-6 py-3 font-medium ${activeTab === "users" ? "text-[#493129] border-b-2 border-[#8b597b]" : "text-[#8b597b] hover:text-[#493129]"}`}
+              className={`px-6 py-3 font-medium transition-all duration-300 ${
+                activeTab === "users" 
+                  ? "text-[#121212] border-b-2 border-[#a162e8]" 
+                  : "text-[#555] hover:text-[#121212] hover:bg-[rgba(161,98,232,0.1)]"
+              }`}
             >
               Users ({users.length})
             </button>
             <button
               onClick={() => setActiveTab("posts")}
-              className={`px-6 py-3 font-medium ${activeTab === "posts" ? "text-[#493129] border-b-2 border-[#8b597b]" : "text-[#8b597b] hover:text-[#493129]"}`}
+              className={`px-6 py-3 font-medium transition-all duration-300 ${
+                activeTab === "posts" 
+                  ? "text-[#121212] border-b-2 border-[#a162e8]" 
+                  : "text-[#555] hover:text-[#121212] hover:bg-[rgba(161,98,232,0.1)]"
+              }`}
             >
               Posts ({posts.length})
             </button>
           </nav>
         </div>
 
+        {/* Content */}
         <div className="p-6">
           {activeTab === "users" ? (
             <div className="space-y-4">
-              <div className="grid grid-cols-12 gap-4 font-medium text-[#493129] pb-2 border-b border-[#efa3a0]/30">
+              <div className="grid grid-cols-12 gap-4 font-medium text-[#121212] pb-2 border-b border-[rgba(161,98,232,0.3)]">
                 <div className="col-span-4">Name</div>
                 <div className="col-span-4">Email</div>
                 <div className="col-span-2">Role</div>
@@ -134,18 +157,22 @@ export default function AdminPage() {
               </div>
               
               {users.map((user) => (
-                <div key={user._id} className="grid grid-cols-12 gap-4 items-center py-3 border-b border-[#efa3a0]/30">
-                  <div className="col-span-4 text-[#493129]">{user.name}</div>
-                  <div className="col-span-4 text-[#8b597b]">{user.email}</div>
+                <div key={user._id} className="grid grid-cols-12 gap-4 items-center py-3 border-b border-[rgba(161,98,232,0.2)] hover:bg-[rgba(161,98,232,0.05)] transition-colors duration-200">
+                  <div className="col-span-4 text-[#121212]">{user.name}</div>
+                  <div className="col-span-4 text-[#555]">{user.email}</div>
                   <div className="col-span-2">
-                    <span className={`px-2 py-1 rounded-full text-xs ${user.role === "admin" ? "bg-[#8b597b] text-[#ffeedb]" : "bg-[#ffdec7] text-[#493129]"}`}>
+                    <span className={`px-3 py-1 rounded-full text-xs ${
+                      user.role === "admin" 
+                        ? "bg-gradient-to-r from-[#a162e8] to-[#08e8de] text-[#121212]" 
+                        : "bg-[rgba(161,98,232,0.1)] text-[#121212] border border-[rgba(161,98,232,0.2)]"
+                    }`}>
                       {user.role}
                     </span>
                   </div>
                   <div className="col-span-2">
                     <button
                       onClick={() => deleteUser(user._id)}
-                      className="text-[#efa3a0] hover:text-[#493129] font-medium text-sm"
+                      className="px-3 py-1 rounded-lg text-sm bg-[rgba(255,255,255,0.1)] hover:bg-[rgba(161,98,232,0.2)] text-[#a162e8] hover:text-[#121212] border border-[rgba(161,98,232,0.3)] transition-all duration-300 hover:shadow-[0_0_8px_rgba(161,98,232,0.2)]"
                     >
                       Delete
                     </button>
@@ -155,7 +182,7 @@ export default function AdminPage() {
             </div>
           ) : (
             <div className="space-y-4">
-              <div className="grid grid-cols-12 gap-4 font-medium text-[#493129] pb-2 border-b border-[#efa3a0]/30">
+              <div className="grid grid-cols-12 gap-4 font-medium text-[#121212] pb-2 border-b border-[rgba(161,98,232,0.3)]">
                 <div className="col-span-6">Title</div>
                 <div className="col-span-3">Author</div>
                 <div className="col-span-2">Date</div>
@@ -163,16 +190,16 @@ export default function AdminPage() {
               </div>
               
               {posts.map((post) => (
-                <div key={post._id} className="grid grid-cols-12 gap-4 items-center py-3 border-b border-[#efa3a0]/30">
-                  <div className="col-span-6 text-[#493129] truncate">{post.title}</div>
-                  <div className="col-span-3 text-[#8b597b]">{post.author?.name || "Unknown"}</div>
-                  <div className="col-span-2 text-sm text-[#8b597b]">
+                <div key={post._id} className="grid grid-cols-12 gap-4 items-center py-3 border-b border-[rgba(161,98,232,0.2)] hover:bg-[rgba(161,98,232,0.05)] transition-colors duration-200">
+                  <div className="col-span-6 text-[#121212] truncate">{post.title}</div>
+                  <div className="col-span-3 text-[#555]">{post.author?.name || "Unknown"}</div>
+                  <div className="col-span-2 text-sm text-[#555]">
                     {new Date(post.createdAt).toLocaleDateString()}
                   </div>
                   <div className="col-span-1">
                     <button
                       onClick={() => deletePost(post._id)}
-                      className="text-[#efa3a0] hover:text-[#493129] font-medium text-sm"
+                      className="px-3 py-1 rounded-lg text-sm bg-[rgba(255,255,255,0.1)] hover:bg-[rgba(161,98,232,0.2)] text-[#a162e8] hover:text-[#121212] border border-[rgba(161,98,232,0.3)] transition-all duration-300 hover:shadow-[0_0_8px_rgba(161,98,232,0.2)]"
                     >
                       Delete
                     </button>

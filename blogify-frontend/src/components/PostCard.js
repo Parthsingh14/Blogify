@@ -26,16 +26,16 @@ export default function PostCard({ post }) {
   }, [])
 
   const handleDelete = async () => {
-    const confirmDelete = confirm("Are you sure you want to delete this post?")
+    const confirmDelete = confirm("Initiate post deletion sequence?")
     if (!confirmDelete) return
 
     setIsDeleting(true)
     try {
       await axios.delete(`/posts/${post._id}`)
-      alert("Post deleted successfully!")
+      alert("Post successfully vaporized!")
       router.refresh()
     } catch (err) {
-      alert("Failed to delete post.")
+      alert("Deletion failed - quantum interference detected")
     } finally {
       setIsDeleting(false)
     }
@@ -44,61 +44,62 @@ export default function PostCard({ post }) {
   if (!post) return null
 
   return (
-    <div className="bg-[#ffeedb] p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 border border-[#ffdec7]">
-      {/* Cover Image */}
-      <div className="relative overflow-hidden rounded-lg mb-4 h-48">
+    <div className="backdrop-blur-lg bg-[rgba(255,255,255,0.08)] p-6 rounded-xl border border-[rgba(161,98,232,0.3)] shadow-lg hover:shadow-[0_0_30px_rgba(161,98,232,0.3)] transition-all duration-500 hover:-translate-y-1">
+      {/* Holographic Cover Image */}
+      <div className="relative overflow-hidden rounded-xl mb-6 h-52 group">
         <img
           src={post.coverImage || '/placeholder-image.jpg'}
           alt={post.title}
-          className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+          className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:brightness-110"
           loading="lazy"
         />
+        <div className="absolute inset-0 bg-gradient-to-t from-[rgba(8,232,222,0.2)] to-transparent pointer-events-none" />
       </div>
 
       {/* Post Content */}
-      <div className="space-y-3">
-        <h2 className="text-xl font-bold text-[#493129] hover:text-[#8b597b] transition-colors duration-200">
+      <div className="space-y-4">
+        <h2 className="text-2xl font-bold text-[#22223b] hover:text-[#a162e8] transition-colors duration-300 hover:drop-shadow-[0_0_10px_rgba(161,98,232,0.7)]">
           {post.title}
         </h2>
         
-        <p className="text-[#493129] line-clamp-3">
+        <p className="text-[#22223b] line-clamp-3">
           {post.content.slice(0, 150)}...
         </p>
         
-        <div className="flex justify-between items-center pt-2">
+        <div className="flex justify-between items-center pt-3">
           <Link 
             href={`/posts/${post._id}`} 
-            className="text-[#8b597b] font-medium hover:text-[#493129] flex items-center gap-1 transition-colors duration-200"
+            className="text-[#08e8de] font-medium hover:text-white flex items-center gap-2 transition-all duration-300 group"
           >
-            Read More
-            <span className="text-lg">→</span>
+            <span>Explore Post</span>
+            <span className="text-xl group-hover:translate-x-1 transition-transform duration-300">→</span>
           </Link>
           
           {/* Author Info */}
-          <span className="text-sm text-[#8b597b]">
-            by {post.author?.name || 'Unknown'}
+          <span className="text-sm text-[rgba(255,255,255,0.6)]">
+            by {post.author?.name || 'Cosmic Traveler'}
           </span>
         </div>
       </div>
 
-      {/* Edit/Delete Actions (only for author) */}
+      {/* Quantum Controls (only for author) */}
       {!isLoading && user && user._id === post.author._id && (
-        <div className="flex gap-4 mt-4 pt-4 border-t border-[#efa3a0]/30">
+        <div className="flex gap-4 mt-6 pt-4 border-t border-[rgba(161,98,232,0.3)]">
           <Link 
             href={`/edit/${post._id}`} 
-            className="text-[#493129] hover:text-[#8b597b] px-3 py-1 rounded-md hover:bg-[#ffdec7] transition-all duration-200 text-sm font-medium"
+            className="text-[#22223b] hover:text-[#08e8de] px-4 py-2 rounded-lg hover:bg-[rgba(8,232,222,0.2)] border border-[rgba(255,255,255,0.1)] transition-all duration-300 hover:border-[#08e8de] hover:scale-105 text-sm font-medium"
           >
-            Edit
+            Modify
           </Link>
           <button 
             onClick={handleDelete} 
             disabled={isDeleting}
-            className="text-[#493129] hover:text-[#efa3a0] px-3 py-1 rounded-md hover:bg-[#ffdec7] transition-all duration-200 text-sm font-medium flex items-center gap-1 disabled:opacity-50"
+            className="text-[#22223b] hover:text-[#a162e8] px-4 py-2 rounded-lg hover:bg-[rgba(161,98,232,0.2)] border border-[rgba(255,255,255,0.1)] transition-all duration-300 hover:border-[#a162e8] hover:scale-105 text-sm font-medium flex items-center gap-2 disabled:opacity-50"
           >
             {isDeleting ? (
               <>
-                <span className="inline-block w-4 h-4 border-2 border-[#efa3a0] border-t-transparent rounded-full animate-spin"></span>
-                Deleting...
+                <span className="inline-block w-4 h-4 border-2 border-[#a162e8] border-t-transparent rounded-full animate-spin"></span>
+                Erasing...
               </>
             ) : 'Delete'}
           </button>

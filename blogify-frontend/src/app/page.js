@@ -14,7 +14,6 @@ export default function Home() {
 
   const limit = 4 // posts per page
 
-  // Memoized fetch function with debouncing
   const fetchPosts = useCallback(async () => {
     setIsLoading(true)
     try {
@@ -35,114 +34,113 @@ export default function Home() {
     }
   }, [search, category, page, limit])
 
-  // Debounce search input
   useEffect(() => {
     if (searchTimeout) clearTimeout(searchTimeout)
     
     setSearchTimeout(setTimeout(() => {
-      setPage(1) // Reset to first page on new search
+      setPage(1)
       fetchPosts()
     }, 500))
 
     return () => clearTimeout(searchTimeout)
   }, [search, category])
 
-  // Fetch posts when page changes
   useEffect(() => {
     fetchPosts()
   }, [page, fetchPosts])
 
-  // Loading skeleton for posts
   const renderLoadingSkeletons = () => {
     return Array(limit).fill(0).map((_, index) => (
-      <div key={index} className="border border-[#ffdec7] rounded-lg p-4 animate-pulse">
-        <div className="h-6 w-3/4 bg-[#ffdec7] rounded mb-3"></div>
-        <div className="h-4 w-full bg-[#ffdec7] rounded mb-2"></div>
-        <div className="h-4 w-2/3 bg-[#ffdec7] rounded mb-4"></div>
-        <div className="h-8 w-24 bg-[#efa3a0] rounded"></div>
+      <div 
+        key={index} 
+        className="backdrop-blur-md bg-[rgba(255,255,255,0.05)] border border-[rgba(161,98,232,0.3)] rounded-xl p-6 animate-pulse"
+      >
+        <div className="h-7 w-3/4 bg-[rgba(161,98,232,0.2)] rounded-full mb-4"></div>
+        <div className="h-4 w-full bg-[rgba(255,255,255,0.1)] rounded-full mb-2"></div>
+        <div className="h-4 w-2/3 bg-[rgba(255,255,255,0.1)] rounded-full mb-6"></div>
+        <div className="h-10 w-28 bg-gradient-to-r from-[rgba(161,98,232,0.3)] to-[rgba(8,232,222,0.3)] rounded-full"></div>
       </div>
     ))
   }
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-[#493129]">All Blog Posts</h1>
+    <div className="space-y-8 max-w-6xl mx-auto px-6 py-8">
 
-      {/* 🔍 Search + Filter */}
-      <div className="flex flex-col sm:flex-row gap-4 mb-6">
+      {/* Search + Filter */}
+      <div className="flex flex-col sm:flex-row gap-4 mb-8">
         <input
           type="text"
-          placeholder="Search posts..."
-          className="border border-[#efa3a0] p-2 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-[#8b597b] focus:border-transparent text-[#493129]"
+          placeholder="Search across the cosmos..."
+          className="backdrop-blur-md bg-[rgba(255,255,255,0.1)] border border-[rgba(161,98,232,0.3)] p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#a162e8] focus:border-transparent text-[#e0e0ff] placeholder-[rgba(224,224,255,0.6)] transition-all duration-300 hover:border-[#08e8de]"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
         <select
-          className="border border-[#efa3a0] p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8b597b] focus:border-transparent text-[#493129] bg-white"
+          className="backdrop-blur-md bg-[rgba(255,255,255,0.1)] border border-[rgba(161,98,232,0.3)] p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#a162e8] focus:border-transparent text-[#e0e0ff] transition-all duration-300 hover:border-[#08e8de]"
           value={category}
           onChange={(e) => setCategory(e.target.value)}
         >
-          <option value="">All Categories</option>
-          <option value="tech">Tech</option>
-          <option value="lifestyle">Lifestyle</option>
-          <option value="education">Education</option>
+          <option value="">All Dimensions</option>
+          <option value="tech">Quantum Tech</option>
+          <option value="lifestyle">Nebula Lifestyle</option>
+          <option value="education">Cosmic Education</option>
         </select>
       </div>
 
-      {/* 📦 Posts List */}
+      {/* Posts List */}
       {isLoading ? (
-        <div className="space-y-4">
+        <div className="space-y-6">
           {renderLoadingSkeletons()}
         </div>
       ) : posts.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-[#8b597b] text-lg">No posts found matching your criteria.</p>
+        <div className="text-center py-16 backdrop-blur-md bg-[rgba(255,255,255,0.05)] rounded-xl border border-[rgba(161,98,232,0.3)]">
+          <p className="text-[#08e8de] text-xl mb-6">No celestial posts found in this quadrant.</p>
           <button 
             onClick={() => {
               setSearch("")
               setCategory("")
               setPage(1)
             }}
-            className="mt-4 px-4 py-2 bg-[#efa3a0] text-[#493129] rounded-lg hover:bg-[#8b597b] hover:text-[#ffeedb] transition-colors duration-200"
+            className="px-6 py-3 bg-gradient-to-r from-[#a162e8] to-[#08e8de] text-[#121212] font-medium rounded-xl hover:shadow-[0_0_20px_rgba(161,98,232,0.5)] transition-all duration-300 hover:scale-105"
           >
-            Clear Filters
+            Reset Stellar Filters
           </button>
         </div>
       ) : (
-        <div className="space-y-6">
+        <div className="space-y-8">
           {posts.map((post) => (
             <PostCard key={post._id} post={post} />
           ))}
         </div>
       )}
 
-      {/* 🔁 Pagination */}
+      {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex justify-center gap-4 mt-8">
+        <div className="flex justify-center gap-4 mt-12">
           <button
             disabled={page === 1 || isLoading}
             onClick={() => setPage((prev) => prev - 1)}
-            className={`px-4 py-2 rounded-lg transition-colors duration-200 ${
+            className={`px-6 py-3 rounded-xl transition-all duration-300 ${
               page === 1 || isLoading
-                ? "bg-[#ffdec7] text-[#493129]/50 cursor-not-allowed"
-                : "bg-[#8b597b] text-[#ffeedb] hover:bg-[#493129]"
+                ? "bg-[rgba(255,255,255,0.05)] text-[rgba(224,224,255,0.5)] border border-[rgba(255,255,255,0.1)] cursor-not-allowed"
+                : "bg-[rgba(161,98,232,0.3)] text-[#e0e0ff] hover:bg-[rgba(161,98,232,0.5)] hover:shadow-[0_0_15px_rgba(161,98,232,0.3)] hover:scale-105"
             }`}
           >
-            Prev
+            ← Previous
           </button>
-          <span className="px-4 py-2 text-[#493129] flex items-center">
-            {`Page ${page} of ${totalPages}`}
+          <span className="px-6 py-3 text-[#e0e0ff] flex items-center backdrop-blur-md bg-[rgba(255,255,255,0.05)] rounded-xl border border-[rgba(161,98,232,0.3)]">
+            {`Stellar Page ${page} of ${totalPages}`}
           </span>
           <button
             disabled={page === totalPages || isLoading}
             onClick={() => setPage((prev) => prev + 1)}
-            className={`px-4 py-2 rounded-lg transition-colors duration-200 ${
+            className={`px-6 py-3 rounded-xl transition-all duration-300 ${
               page === totalPages || isLoading
-                ? "bg-[#ffdec7] text-[#493129]/50 cursor-not-allowed"
-                : "bg-[#8b597b] text-[#ffeedb] hover:bg-[#493129]"
+                ? "bg-[rgba(255,255,255,0.05)] text-[rgba(224,224,255,0.5)] border border-[rgba(255,255,255,0.1)] cursor-not-allowed"
+                : "bg-[rgba(161,98,232,0.3)] text-[#e0e0ff] hover:bg-[rgba(161,98,232,0.5)] hover:shadow-[0_0_15px_rgba(161,98,232,0.3)] hover:scale-105"
             }`}
           >
-            Next
+            Next →
           </button>
         </div>
       )}

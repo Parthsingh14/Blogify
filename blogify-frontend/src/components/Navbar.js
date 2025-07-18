@@ -10,7 +10,6 @@ export default function Navbar() {
   const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
 
-  // Function to check auth state
   const checkAuthState = async () => {
     try {
       const storedToken = localStorage.getItem("token")
@@ -30,10 +29,7 @@ export default function Navbar() {
   }
 
   useEffect(() => {
-    // Initial check
     checkAuthState()
-
-    // Set up storage event listener
     const handleStorageChange = (e) => {
       if (e.key === "token") {
         checkAuthState()
@@ -41,8 +37,6 @@ export default function Navbar() {
     }
 
     window.addEventListener('storage', handleStorageChange)
-
-    // Set up custom event listener for same-tab auth changes
     const handleAuthChange = () => checkAuthState()
     window.addEventListener('auth-change', handleAuthChange)
 
@@ -54,7 +48,6 @@ export default function Navbar() {
 
   const logout = () => {
     localStorage.removeItem("token")
-    // Dispatch custom event to notify other components
     window.dispatchEvent(new Event('auth-change'))
     router.push("/")
   }
@@ -62,23 +55,23 @@ export default function Navbar() {
   // Loading skeleton
   if (isLoading) {
     return (
-      <nav className="bg-[#ffeedb] shadow-md p-4 flex justify-between items-center border-b border-[#efa3a0]/30">
-        <Link href="/" className="font-bold text-xl text-[#493129] animate-pulse">
+      <nav className="backdrop-blur-lg bg-[rgba(255,255,255,0.1)] p-4 flex justify-between items-center sticky top-0 z-50 border-b border-[rgba(161,98,232,0.3)] shadow-lg">
+        <Link href="/" className="font-bold text-xl text-[#e0e0ff] animate-pulse">
           Blogify
         </Link>
         <div className="flex space-x-4">
-          <div className="h-6 w-16 bg-[#ffdec7] rounded animate-pulse"></div>
-          <div className="h-6 w-20 bg-[#ffdec7] rounded animate-pulse"></div>
+          <div className="h-8 w-20 bg-[rgba(161,98,232,0.2)] rounded-full animate-pulse"></div>
+          <div className="h-8 w-24 bg-[rgba(8,232,222,0.2)] rounded-full animate-pulse"></div>
         </div>
       </nav>
     )
   }
 
   return (
-    <nav className="bg-[#ffeedb] shadow-md p-4 flex justify-between items-center sticky top-0 z-50 border-b border-[#efa3a0]/30">
+    <nav className="backdrop-blur-lg bg-[rgba(255,255,255,0.1)] p-4 flex justify-between items-center sticky top-0 z-50 border-b border-[rgba(161,98,232,0.3)] shadow-lg">
       <Link 
         href="/" 
-        className="font-bold text-xl text-[#493129] hover:text-[#8b597b] transition-colors duration-200"
+        className="font-bold text-2xl text-[#e0e0ff] hover:text-[#a162e8] transition-colors duration-300 hover:drop-shadow-[0_0_10px_rgba(161,98,232,0.7)]"
       >
         Blogify
       </Link>
@@ -88,13 +81,13 @@ export default function Navbar() {
           <>
             <Link 
               href="/login" 
-              className="text-[#493129] hover:text-[#8b597b] font-medium px-3 py-1 rounded-md hover:bg-[#ffdec7] transition-all duration-200"
+              className="text-[#22223b] hover:text-[#08e8de] font-medium px-4 py-2 rounded-full hover:bg-[rgba(8,232,222,0.2)] border border-[rgba(255,255,255,0.1)] transition-all duration-300 hover:border-[#08e8de] hover:scale-105"
             >
               Login
             </Link>
             <Link 
               href="/register" 
-              className="bg-[#efa3a0] text-[#493129] hover:bg-[#8b597b] hover:text-[#ffeedb] font-medium px-3 py-1 rounded-md transition-all duration-200"
+              className="hover-iridescent font-medium px-4 py-2 rounded-full border border-[rgba(255,255,255,0.1)] text-[#22223b] transition-all duration-300 hover:scale-105 hover:shadow-[0_0_15px_rgba(161,98,232,0.5)]"
             >
               Register
             </Link>
@@ -103,13 +96,13 @@ export default function Navbar() {
           <>
             <Link 
               href="/create-post" 
-              className="bg-[#8b597b] text-[#ffeedb] hover:bg-[#493129] font-medium px-3 py-1 rounded-md flex items-center gap-1 transition-all duration-200"
+              className="bg-gradient-to-r from-[#a162e8] to-[#08e8de] text-[#22223b] font-medium px-4 py-2 rounded-full flex items-center gap-1 transition-all duration-300 hover:shadow-[0_0_20px_rgba(161,98,232,0.7)] hover:scale-105"
             >
               <span>+</span> New Post
             </Link>
             <button 
               onClick={logout} 
-              className="text-[#493129] hover:text-[#efa3a0] font-medium px-3 py-1 rounded-md hover:bg-[#ffdec7] transition-all duration-200"
+              className="text-[#22223b] hover:text-[#08e8de] font-medium px-4 py-2 rounded-full hover:bg-[rgba(255,255,255,0.1)] border border-[rgba(255,255,255,0.1)] transition-all duration-300 hover:border-[#08e8de] hover:scale-105"
             >
               Logout
             </button>
@@ -119,7 +112,7 @@ export default function Navbar() {
         {user && user.role === "admin" && (
           <Link 
             href="/admin" 
-            className="bg-[#493129] text-[#ffeedb] hover:bg-[#8b597b] font-medium px-3 py-1 rounded-md transition-all duration-200"
+            className="bg-[rgba(161,98,232,0.3)] text-[#e0e0ff] font-medium px-4 py-2 rounded-full border border-[rgba(161,98,232,0.5)] transition-all duration-300 hover:bg-[rgba(161,98,232,0.5)] hover:shadow-[0_0_15px_rgba(161,98,232,0.5)] hover:scale-105"
           >
             Admin
           </Link>

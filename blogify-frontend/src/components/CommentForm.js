@@ -64,12 +64,12 @@ export default function CommentForm({ postId, onCommentAdded }) {
           value={text}
           onChange={handleTextChange}
           rows="4"
-          className="w-full border border-[#efa3a0] p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8b597b] focus:border-transparent text-[#493129] bg-[#ffeedb]"
-          placeholder="Share your thoughts..."
+          className="w-full backdrop-blur-sm bg-[rgba(255,255,255,0.1)] border border-[rgba(161,98,232,0.3)] p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#a162e8] focus:border-transparent text-[#121212] placeholder-[rgba(18,18,18,0.6)] transition-all duration-300 hover:border-[#08e8de]"
+          placeholder="Share your cosmic thoughts..."
           required
           disabled={isSubmitting}
         ></textarea>
-        <div className="absolute bottom-2 right-2 text-xs text-[#8b597b]">
+        <div className="absolute bottom-3 right-3 text-xs text-[#555] backdrop-blur-sm bg-[rgba(255,255,255,0.2)] px-2 py-1 rounded-full">
           {charCount}/{maxChars}
         </div>
       </div>
@@ -78,16 +78,16 @@ export default function CommentForm({ postId, onCommentAdded }) {
         <button
           type="submit"
           disabled={!text.trim() || isSubmitting}
-          className={`px-4 py-2 rounded-lg transition-colors duration-200 flex items-center gap-2 ${
+          className={`px-6 py-3 rounded-xl transition-all duration-300 flex items-center gap-2 ${
             !text.trim() || isSubmitting
-              ? "bg-[#ffdec7] text-[#493129]/50 cursor-not-allowed"
-              : "bg-[#8b597b] text-[#ffeedb] hover:bg-[#493129]"
+              ? "bg-[rgba(161,98,232,0.1)] text-[#121212]/50 cursor-not-allowed border border-[rgba(161,98,232,0.2)]"
+              : "bg-gradient-to-r from-[#a162e8] to-[#08e8de] text-[#121212] hover:shadow-[0_0_15px_rgba(161,98,232,0.5)] hover:scale-105"
           }`}
         >
           {isSubmitting ? (
             <>
               <span className="inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></span>
-              Posting...
+              Transmitting...
             </>
           ) : (
             "Post Comment"
@@ -95,7 +95,7 @@ export default function CommentForm({ postId, onCommentAdded }) {
         </button>
         
         {error && (
-          <p className="text-sm text-[#efa3a0] px-2 py-1 rounded">
+          <p className="text-sm text-[#a162e8] px-3 py-2 rounded-xl backdrop-blur-sm bg-[rgba(161,98,232,0.1)] border border-[rgba(161,98,232,0.3)]">
             {error}
           </p>
         )}

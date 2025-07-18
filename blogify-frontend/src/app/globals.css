@@ -1,1 +1,54 @@
 @import "tailwindcss";
+
+@keyframes float {
+  0% {
+    transform: translateY(0) translateX(0);
+  }
+  50% {
+    transform: translateY(-100px) translateX(100px);
+  }
+  100% {
+    transform: translateY(0) translateX(0);
+  }
+}
+
+/* Glass fracture effect for errors */
+@keyframes fracture {
+  0% {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  }
+  20% {
+    clip-path: polygon(0 0, 80% 20%, 100% 100%, 20% 80%);
+  }
+  40% {
+    clip-path: polygon(0 0, 60% 40%, 100% 100%, 40% 60%);
+  }
+  60% {
+    clip-path: polygon(0 0, 40% 60%, 100% 100%, 60% 40%);
+  }
+  80% {
+    clip-path: polygon(0 0, 20% 80%, 100% 100%, 80% 20%);
+  }
+  100% {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  }
+}
+
+/* Iridescent effect for hover states */
+.hover-iridescent:hover {
+  background: linear-gradient(45deg, #a162e8, #08e8de);
+  background-size: 200% 200%;
+  animation: iridescent 2s ease infinite;
+}
+
+@keyframes iridescent {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
