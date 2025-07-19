@@ -1,6 +1,5 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-
 import Navbar from "@/components/Navbar";
 
 const geistSans = Geist({
@@ -21,36 +20,27 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className="h-full">
-      <body className={`min-h-screen bg-[url('/images/cosmic-bg.jpg')] bg-cover bg-fixed bg-center text-white ${geistSans.variable} ${geistMono.variable}`}>
-        {/* Cosmic gradient overlay */}
-        <div className="fixed inset-0 bg-gradient-to-br from-[rgba(161,98,232,0.15)] to-[rgba(8,232,222,0.1)] pointer-events-none" />
+      <body className={`min-h-screen bg-gray-950 text-gray-100 ${geistSans.variable} ${geistMono.variable}`}>
+        {/* Dark tech background with subtle texture */}
+        <div className="fixed inset-0 bg-[radial-gradient(circle_at_center,#1a1a1a_0%,#111_70%)] opacity-100" />
         
-        {/* Frosted glass background layer */}
-        <div className="min-h-screen backdrop-blur-2xl bg-[rgba(255,255,255,0.08)]">
+        {/* Main content container - left aligned */}
+        <div className="min-h-screen relative">
           <Navbar />
           
-          {/* Main content with subtle parallax effect */}
-          <main className="max-w-6xl mx-auto px-6 py-8 transform-[translateZ(0)]">
+          {/* Left-aligned content container */}
+          <main className="w-full max-w-7xl px-2 py-8 mx-0 md:ml-12 lg:ml-2">
             <div className="relative z-10">
               {children}
             </div>
             
-            {/* Floating particles for depth */}
+            {/* Tech-inspired decorative elements */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none">
-              {[...Array(15)].map((_, i) => (
-                <div 
-                  key={i}
-                  className="absolute rounded-full bg-[rgba(161,98,232,0.4)]"
-                  style={{
-                    width: Math.random() * 5 + 1 + 'px',
-                    height: Math.random() * 5 + 1 + 'px',
-                    top: Math.random() * 100 + '%',
-                    left: Math.random() * 100 + '%',
-                    animation: `float ${Math.random() * 20 + 10}s linear infinite`,
-                    opacity: Math.random() * 0.5 + 0.1
-                  }}
-                />
-              ))}
+              {/* Grid lines for tech vibe */}
+              <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxyZWN0IHdpZHRoPSIyIiBoZWlnaHQ9IjIiIHg9IjAiIHk9IjAiIGZpbGw9IiMzMzMzMzMiIG9wYWNpdHk9IjAuMSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNwYXR0ZXJuKSIvPjwvc3ZnPg==')] opacity-20" />
+              
+              {/* Subtle corner accent */}
+              <div className="absolute bottom-0 right-0 w-32 h-32 border-r-2 border-b-2 border-teal-400/20" />
             </div>
           </main>
         </div>

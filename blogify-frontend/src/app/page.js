@@ -53,91 +53,91 @@ export default function Home() {
     return Array(limit).fill(0).map((_, index) => (
       <div 
         key={index} 
-        className="backdrop-blur-md bg-[rgba(255,255,255,0.05)] border border-[rgba(161,98,232,0.3)] rounded-xl p-6 animate-pulse"
+        className="bg-gray-800 border border-gray-700 rounded-lg p-6 animate-pulse space-y-4"
       >
-        <div className="h-7 w-3/4 bg-[rgba(161,98,232,0.2)] rounded-full mb-4"></div>
-        <div className="h-4 w-full bg-[rgba(255,255,255,0.1)] rounded-full mb-2"></div>
-        <div className="h-4 w-2/3 bg-[rgba(255,255,255,0.1)] rounded-full mb-6"></div>
-        <div className="h-10 w-28 bg-gradient-to-r from-[rgba(161,98,232,0.3)] to-[rgba(8,232,222,0.3)] rounded-full"></div>
+        <div className="h-7 w-3/4 bg-gray-700 rounded-full"></div>
+        <div className="h-4 w-full bg-gray-700 rounded-full"></div>
+        <div className="h-4 w-2/3 bg-gray-700 rounded-full"></div>
+        <div className="h-10 w-28 bg-gray-700 rounded-full mt-4"></div>
       </div>
     ))
   }
 
   return (
-    <div className="space-y-8 max-w-6xl mx-auto px-6 py-8">
+    <div className="space-y-8 px-2 py-8 ml-0 md:ml-12 lg:ml-24">
 
-      {/* Search + Filter */}
-      <div className="flex flex-col sm:flex-row gap-4 mb-8">
+      {/* Search + Filter - Left aligned */}
+      <div className="flex flex-col sm:flex-row gap-4 mb-8 w-full">
         <input
           type="text"
-          placeholder="Search across the cosmos..."
-          className="backdrop-blur-md bg-[rgba(255,255,255,0.1)] border border-[rgba(161,98,232,0.3)] p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#a162e8] focus:border-transparent text-[#e0e0ff] placeholder-[rgba(224,224,255,0.6)] transition-all duration-300 hover:border-[#08e8de]"
+          placeholder="Search posts..."
+          className="bg-gray-800 border border-gray-700 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent text-white placeholder-gray-500 transition-all duration-300 w-full sm:w-auto flex-grow"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
         <select
-          className="backdrop-blur-md bg-[rgba(255,255,255,0.1)] border border-[rgba(161,98,232,0.3)] p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#a162e8] focus:border-transparent text-[#e0e0ff] transition-all duration-300 hover:border-[#08e8de]"
+          className="bg-gray-800 border border-gray-700 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent text-white transition-all duration-300 w-full sm:w-auto"
           value={category}
           onChange={(e) => setCategory(e.target.value)}
         >
-          <option value="">All Dimensions</option>
-          <option value="tech">Quantum Tech</option>
-          <option value="lifestyle">Nebula Lifestyle</option>
-          <option value="education">Cosmic Education</option>
+          <option value="">All Categories</option>
+          <option value="tech">Tech</option>
+          <option value="lifestyle">Lifestyle</option>
+          <option value="education">Education</option>
         </select>
       </div>
 
-      {/* Posts List */}
+      {/* Posts List - Left aligned */}
       {isLoading ? (
         <div className="space-y-6">
           {renderLoadingSkeletons()}
         </div>
       ) : posts.length === 0 ? (
-        <div className="text-center py-16 backdrop-blur-md bg-[rgba(255,255,255,0.05)] rounded-xl border border-[rgba(161,98,232,0.3)]">
-          <p className="text-[#08e8de] text-xl mb-6">No celestial posts found in this quadrant.</p>
+        <div className="py-16 bg-gray-800 rounded-lg border border-gray-700 text-left">
+          <p className="text-teal-400 text-xl mb-6">No posts found matching your criteria.</p>
           <button 
             onClick={() => {
               setSearch("")
               setCategory("")
               setPage(1)
             }}
-            className="px-6 py-3 bg-gradient-to-r from-[#a162e8] to-[#08e8de] text-[#121212] font-medium rounded-xl hover:shadow-[0_0_20px_rgba(161,98,232,0.5)] transition-all duration-300 hover:scale-105"
+            className="px-6 py-3 bg-teal-600 hover:bg-teal-500 text-white font-medium rounded-lg transition-all duration-300"
           >
-            Reset Stellar Filters
+            Reset Filters
           </button>
         </div>
       ) : (
-        <div className="space-y-8">
+        <div className="space-y-6">
           {posts.map((post) => (
             <PostCard key={post._id} post={post} />
           ))}
         </div>
       )}
 
-      {/* Pagination */}
+      {/* Pagination - Left aligned */}
       {totalPages > 1 && (
-        <div className="flex justify-center gap-4 mt-12">
+        <div className="flex flex-wrap gap-4 mt-12">
           <button
             disabled={page === 1 || isLoading}
             onClick={() => setPage((prev) => prev - 1)}
-            className={`px-6 py-3 rounded-xl transition-all duration-300 ${
+            className={`px-6 py-3 rounded-lg transition-all duration-300 ${
               page === 1 || isLoading
-                ? "bg-[rgba(255,255,255,0.05)] text-[rgba(224,224,255,0.5)] border border-[rgba(255,255,255,0.1)] cursor-not-allowed"
-                : "bg-[rgba(161,98,232,0.3)] text-[#e0e0ff] hover:bg-[rgba(161,98,232,0.5)] hover:shadow-[0_0_15px_rgba(161,98,232,0.3)] hover:scale-105"
+                ? "bg-gray-800 text-gray-500 border border-gray-700 cursor-not-allowed"
+                : "bg-gray-700 text-white hover:bg-gray-600 hover:text-teal-400"
             }`}
           >
             ← Previous
           </button>
-          <span className="px-6 py-3 text-[#e0e0ff] flex items-center backdrop-blur-md bg-[rgba(255,255,255,0.05)] rounded-xl border border-[rgba(161,98,232,0.3)]">
-            {`Stellar Page ${page} of ${totalPages}`}
+          <span className="px-6 py-3 text-white flex items-center bg-gray-800 rounded-lg border border-gray-700">
+            Page {page} of {totalPages}
           </span>
           <button
             disabled={page === totalPages || isLoading}
             onClick={() => setPage((prev) => prev + 1)}
-            className={`px-6 py-3 rounded-xl transition-all duration-300 ${
+            className={`px-6 py-3 rounded-lg transition-all duration-300 ${
               page === totalPages || isLoading
-                ? "bg-[rgba(255,255,255,0.05)] text-[rgba(224,224,255,0.5)] border border-[rgba(255,255,255,0.1)] cursor-not-allowed"
-                : "bg-[rgba(161,98,232,0.3)] text-[#e0e0ff] hover:bg-[rgba(161,98,232,0.5)] hover:shadow-[0_0_15px_rgba(161,98,232,0.3)] hover:scale-105"
+                ? "bg-gray-800 text-gray-500 border border-gray-700 cursor-not-allowed"
+                : "bg-gray-700 text-white hover:bg-gray-600 hover:text-teal-400"
             }`}
           >
             Next →

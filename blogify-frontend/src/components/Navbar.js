@@ -3,11 +3,13 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { getUserFromToken } from "@/lib/auth"
+import { Menu, X } from "lucide-react"
 
 export default function Navbar() {
   const [token, setToken] = useState(null)
   const [user, setUser] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const router = useRouter()
 
   const checkAuthState = async () => {
@@ -50,74 +52,157 @@ export default function Navbar() {
     localStorage.removeItem("token")
     window.dispatchEvent(new Event('auth-change'))
     router.push("/")
+    setMobileMenuOpen(false)
   }
 
   // Loading skeleton
   if (isLoading) {
     return (
-      <nav className="backdrop-blur-lg bg-[rgba(255,255,255,0.1)] p-4 flex justify-between items-center sticky top-0 z-50 border-b border-[rgba(161,98,232,0.3)] shadow-lg">
-        <Link href="/" className="font-bold text-xl text-[#e0e0ff] animate-pulse">
+      <nav className="bg-gray-900 border-b border-gray-800 p-4 flex justify-between items-center sticky top-0 z-50">
+        <Link href="/" className="font-bold text-xl text-gray-300 animate-pulse">
           Blogify
         </Link>
-        <div className="flex space-x-4">
-          <div className="h-8 w-20 bg-[rgba(161,98,232,0.2)] rounded-full animate-pulse"></div>
-          <div className="h-8 w-24 bg-[rgba(8,232,222,0.2)] rounded-full animate-pulse"></div>
+        <div className="hidden md:flex space-x-4">
+          <div className="h-8 w-20 bg-gray-800 rounded-full animate-pulse"></div>
+          <div className="h-8 w-24 bg-gray-800 rounded-full animate-pulse"></div>
         </div>
       </nav>
     )
   }
 
   return (
-    <nav className="backdrop-blur-lg bg-[rgba(255,255,255,0.1)] p-4 flex justify-between items-center sticky top-0 z-50 border-b border-[rgba(161,98,232,0.3)] shadow-lg">
-      <Link 
-        href="/" 
-        className="font-bold text-2xl text-[#e0e0ff] hover:text-[#a162e8] transition-colors duration-300 hover:drop-shadow-[0_0_10px_rgba(161,98,232,0.7)]"
-      >
-        Blogify
-      </Link>
+    <>
+      {/* Desktop Navbar */}
+      <nav className="bg-gray-900 border-b border-gray-800 p-4 flex justify-between items-center sticky top-0 z-50">
+        <Link 
+          href="/" 
+          className="font-bold text-2xl text-white hover:text-teal-400 transition-colors duration-300"
+        >
+          Blogify
+        </Link>
 
-      <div className="space-x-4 flex items-center">
-        {!token ? (
-          <>
-            <Link 
-              href="/login" 
-              className="text-[#22223b] hover:text-[#08e8de] font-medium px-4 py-2 rounded-full hover:bg-[rgba(8,232,222,0.2)] border border-[rgba(255,255,255,0.1)] transition-all duration-300 hover:border-[#08e8de] hover:scale-105"
-            >
-              Login
-            </Link>
-            <Link 
-              href="/register" 
-              className="hover-iridescent font-medium px-4 py-2 rounded-full border border-[rgba(255,255,255,0.1)] text-[#22223b] transition-all duration-300 hover:scale-105 hover:shadow-[0_0_15px_rgba(161,98,232,0.5)]"
-            >
-              Register
-            </Link>
-          </>
-        ) : (
-          <>
-            <Link 
-              href="/create-post" 
-              className="bg-gradient-to-r from-[#a162e8] to-[#08e8de] text-[#22223b] font-medium px-4 py-2 rounded-full flex items-center gap-1 transition-all duration-300 hover:shadow-[0_0_20px_rgba(161,98,232,0.7)] hover:scale-105"
-            >
-              <span>+</span> New Post
-            </Link>
-            <button 
-              onClick={logout} 
-              className="text-[#22223b] hover:text-[#08e8de] font-medium px-4 py-2 rounded-full hover:bg-[rgba(255,255,255,0.1)] border border-[rgba(255,255,255,0.1)] transition-all duration-300 hover:border-[#08e8de] hover:scale-105"
-            >
-              Logout
-            </button>
-          </>
-        )}
+        {/* Mobile menu button */}
+        <button 
+          className="md:hidden text-gray-400 hover:text-white focus:outline-none"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        >
+          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
 
-        {user && user.role === "admin" && (
-          <Link 
-            href="/admin" 
-            className="bg-[rgba(161,98,232,0.3)] text-[#e0e0ff] font-medium px-4 py-2 rounded-full border border-[rgba(161,98,232,0.5)] transition-all duration-300 hover:bg-[rgba(161,98,232,0.5)] hover:shadow-[0_0_15px_rgba(161,98,232,0.5)] hover:scale-105"
-          >
-            Admin
-          </Link>
-        )}
-      </div>
-    </nav>
+        {/* Desktop Navigation */}
+        <div className="hidden md:flex space-x-4 items-center">
+          {!token ? (
+            <>
+              <Link 
+                href="/login" 
+                className="text-white hover:text-teal-400 font-medium px-4 py-2 rounded hover:bg-gray-800 border border-gray-700 transition-all duration-300 hover:border-teal-400"
+              >
+                Login
+              </Link>
+              <Link 
+                href="/register" 
+                className="bg-teal-600 hover:bg-teal-500 text-white font-medium px-4 py-2 rounded border border-teal-600 transition-all duration-300 hover:shadow-lg"
+              >
+                Register
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link 
+                href="/create-post" 
+                className="bg-gradient-to-r from-gray-800 to-gray-700 text-white font-medium px-4 py-2 rounded flex items-center gap-1 transition-all duration-300 hover:bg-gradient-to-r hover:from-gray-700 hover:to-gray-600 hover:shadow-lg"
+              >
+                <span>+</span> New Post
+              </Link>
+              <button 
+                onClick={logout} 
+                className="text-white hover:text-teal-400 font-medium px-4 py-2 rounded hover:bg-gray-800 border border-gray-700 transition-all duration-300 hover:border-teal-400"
+              >
+                Logout
+              </button>
+            </>
+          )}
+
+          {user && user.role === "admin" && (
+            <Link 
+              href="/admin" 
+              className="bg-gray-800 text-white font-medium px-4 py-2 rounded border border-gray-700 transition-all duration-300 hover:bg-gray-700 hover:shadow-lg"
+            >
+              Admin
+            </Link>
+          )}
+        </div>
+      </nav>
+
+      {/* Mobile Sidebar */}
+      {mobileMenuOpen && (
+        <div className="md:hidden fixed inset-0 z-40 bg-gray-900 bg-opacity-90">
+          <div className="flex flex-col h-full p-6 space-y-6">
+            <div className="flex justify-between items-center">
+              <Link 
+                href="/" 
+                className="font-bold text-2xl text-white"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Blogify
+              </Link>
+              <button 
+                className="text-gray-400 hover:text-white"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            <div className="flex flex-col space-y-4">
+              {!token ? (
+                <>
+                  <Link 
+                    href="/login" 
+                    className="text-white hover:text-teal-400 font-medium px-4 py-3 rounded hover:bg-gray-800 border border-gray-700 transition-all duration-300"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Login
+                  </Link>
+                  <Link 
+                    href="/register" 
+                    className="bg-teal-600 hover:bg-teal-500 text-white font-medium px-4 py-3 rounded border border-teal-600 transition-all duration-300"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Register
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link 
+                    href="/create-post" 
+                    className="bg-gray-800 text-white font-medium px-4 py-3 rounded flex items-center gap-1 transition-all duration-300 hover:bg-gray-700"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <span>+</span> New Post
+                  </Link>
+                  <button 
+                    onClick={logout} 
+                    className="text-white hover:text-teal-400 font-medium px-4 py-3 rounded hover:bg-gray-800 border border-gray-700 transition-all duration-300 text-left"
+                  >
+                    Logout
+                  </button>
+                </>
+              )}
+
+              {user && user.role === "admin" && (
+                <Link 
+                  href="/admin" 
+                  className="bg-gray-800 text-white font-medium px-4 py-3 rounded border border-gray-700 transition-all duration-300 hover:bg-gray-700"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Admin
+                </Link>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   )
 }

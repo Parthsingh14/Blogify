@@ -132,31 +132,31 @@ export default function CreatePostPage() {
   }
 
   return (
-    <div className="min-h-screen py-8 px-4 backdrop-blur-sm bg-[rgba(255,255,255,0.05)]">
-      <div className="max-w-3xl mx-auto backdrop-blur-lg bg-[rgba(255,255,255,0.1)] p-8 rounded-xl shadow-lg border border-[rgba(161,98,232,0.3)]">
+    <div className="min-h-screen py-12 px-6 bg-gray-900">
+      <div className="max-w-3xl mx-6 md:ml-24 bg-gray-800 p-8 rounded-lg shadow-lg border border-gray-700">
         {/* Back Button */}
         <button
           onClick={() => router.back()}
-          className="flex items-center gap-2 mb-6 text-[#121212] hover:text-[#a162e8] transition-colors duration-300"
+          className="flex items-center gap-2 mb-6 text-gray-300 hover:text-teal-400 transition-colors duration-300"
         >
           <ArrowLeft className="w-5 h-5" />
           <span>Back</span>
         </button>
 
-        <h2 className="text-3xl font-bold text-[#121212] mb-6 text-center bg-gradient-to-r from-[#a162e8] to-[#08e8de] bg-clip-text text-transparent">
+        <h2 className="text-3xl font-bold mb-6 text-center bg-gradient-to-r from-teal-400 to-teal-500 bg-clip-text text-transparent">
           Create New Post
         </h2>
         
         {error && (
-          <div className="backdrop-blur-sm bg-[rgba(161,98,232,0.2)] text-[#121212] p-4 rounded-xl mb-6 text-center border border-[rgba(161,98,232,0.3)]">
+          <div className="bg-gray-700 text-red-400 p-4 rounded-lg mb-6 text-center border border-gray-600">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <div className="flex justify-between items-center mb-2">
-              <label htmlFor="title" className="block text-sm font-medium text-[#121212]">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-2">
+              <label htmlFor="title" className="block text-sm font-medium text-gray-300">
                 Post Title
               </label>
               {formData.content.trim() && (
@@ -164,10 +164,10 @@ export default function CreatePostPage() {
                   type="button"
                   onClick={suggestTitle}
                   disabled={isSuggesting}
-                  className={`text-xs font-medium flex items-center gap-1 px-3 py-2 rounded-xl transition-all duration-300 ${
+                  className={`text-xs font-medium flex items-center gap-1 px-3 py-2 rounded-lg transition-all duration-300 ${
                     isSuggesting
-                      ? "bg-[rgba(161,98,232,0.2)] text-[#121212]/60 cursor-not-allowed border border-[rgba(161,98,232,0.3)]"
-                      : "bg-[rgba(161,98,232,0.2)] hover:bg-[rgba(161,98,232,0.3)] text-[#121212] border border-[rgba(161,98,232,0.3)] hover:shadow-[0_0_10px_rgba(161,98,232,0.3)]"
+                      ? "bg-gray-700 text-gray-400 cursor-not-allowed border border-gray-600"
+                      : "bg-gray-700 hover:bg-gray-600 text-white border border-gray-600 hover:border-teal-400"
                   }`}
                   title="Suggest AI Title"
                 >
@@ -189,20 +189,20 @@ export default function CreatePostPage() {
               name="title"
               value={formData.title}
               placeholder="An interesting title..."
-              className="w-full px-4 py-3 rounded-xl backdrop-blur-sm bg-[rgba(255,255,255,0.1)] border border-[rgba(161,98,232,0.3)] focus:outline-none focus:ring-2 focus:ring-[#a162e8] focus:border-transparent text-[#121212] placeholder-[rgba(18,18,18,0.6)] transition-all duration-300 hover:border-[#08e8de]"
+              className="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent text-white placeholder-gray-400 transition-all duration-300"
               onChange={handleChange}
               required
             />
             {suggestedTitles.length > 0 && (
               <div className="mt-3 space-y-2">
-                <p className="text-xs text-[#555]">Suggested titles:</p>
+                <p className="text-xs text-gray-400">Suggested titles:</p>
                 <div className="flex flex-wrap gap-2">
                   {suggestedTitles.map((title, index) => (
                     <button
                       key={index}
                       type="button"
                       onClick={() => selectTitle(title)}
-                      className="px-3 py-1.5 text-sm backdrop-blur-sm bg-[rgba(161,98,232,0.1)] hover:bg-[rgba(161,98,232,0.2)] text-[#121212] rounded-lg transition-all duration-300 border border-[rgba(161,98,232,0.3)] hover:shadow-[0_0_8px_rgba(161,98,232,0.2)]"
+                      className="px-3 py-1.5 text-sm bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-all duration-300 border border-gray-600 hover:border-teal-400"
                     >
                       {title}
                     </button>
@@ -213,8 +213,8 @@ export default function CreatePostPage() {
           </div>
 
           <div>
-            <div className="flex justify-between items-center mb-2">
-              <label htmlFor="content" className="block text-sm font-medium text-[#121212]">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-2">
+              <label htmlFor="content" className="block text-sm font-medium text-gray-300">
                 Post Content
               </label>
               {formData.content.trim() && (
@@ -222,10 +222,10 @@ export default function CreatePostPage() {
                   type="button"
                   onClick={checkGrammar}
                   disabled={isCheckingGrammar}
-                  className={`text-xs font-medium flex items-center gap-1 px-3 py-2 rounded-xl transition-all duration-300 ${
+                  className={`text-xs font-medium flex items-center gap-1 px-3 py-2 rounded-lg transition-all duration-300 ${
                     isCheckingGrammar
-                      ? "bg-[rgba(8,232,222,0.2)] text-[#121212]/60 cursor-not-allowed border border-[rgba(8,232,222,0.3)]"
-                      : "bg-[rgba(8,232,222,0.2)] hover:bg-[rgba(8,232,222,0.3)] text-[#121212] border border-[rgba(8,232,222,0.3)] hover:shadow-[0_0_10px_rgba(8,232,222,0.3)]"
+                      ? "bg-gray-700 text-gray-400 cursor-not-allowed border border-gray-600"
+                      : "bg-gray-700 hover:bg-gray-600 text-white border border-gray-600 hover:border-teal-400"
                   }`}
                   title="Check Grammar"
                 >
@@ -246,7 +246,7 @@ export default function CreatePostPage() {
               name="content"
               rows="8"
               placeholder="Write your post content here..."
-              className="w-full px-4 py-3 rounded-xl backdrop-blur-sm bg-[rgba(255,255,255,0.1)] border border-[rgba(161,98,232,0.3)] focus:outline-none focus:ring-2 focus:ring-[#a162e8] focus:border-transparent text-[#121212] placeholder-[rgba(18,18,18,0.6)] transition-all duration-300 hover:border-[#08e8de]"
+              className="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent text-white placeholder-gray-400 transition-all duration-300"
               onChange={handleChange}
               value={formData.content}
               required
@@ -255,13 +255,13 @@ export default function CreatePostPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label htmlFor="category" className="block text-sm font-medium text-[#121212] mb-2">
+              <label htmlFor="category" className="block text-sm font-medium text-gray-300 mb-2">
                 Category
               </label>
               <select
                 id="category"
                 name="category"
-                className="w-full px-4 py-3 rounded-xl backdrop-blur-sm bg-[rgba(255,255,255,0.1)] border border-[rgba(161,98,232,0.3)] focus:outline-none focus:ring-2 focus:ring-[#a162e8] focus:border-transparent text-[#121212] transition-all duration-300 hover:border-[#08e8de]"
+                className="w-full px-4 py-3 rounded-lg bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent text-white transition-all duration-300"
                 onChange={handleChange}
                 value={formData.category}
               >
@@ -274,7 +274,7 @@ export default function CreatePostPage() {
             </div>
 
             <div>
-              <label htmlFor="image" className="block text-sm font-medium text-[#121212] mb-2">
+              <label htmlFor="image" className="block text-sm font-medium text-gray-300 mb-2">
                 Cover Image
               </label>
               <div className="flex flex-col items-start gap-3">
@@ -283,11 +283,17 @@ export default function CreatePostPage() {
                   id="image"
                   name="image"
                   accept="image/*"
-                  className="block w-full text-sm text-[#121212] file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-medium file:bg-gradient-to-r file:from-[#a162e8] file:to-[#08e8de] file:text-[#121212] hover:file:shadow-[0_0_10px_rgba(161,98,232,0.3)] transition-all duration-300"
+                  className="block w-full text-sm text-gray-300
+                    file:mr-4 file:py-2 file:px-4 
+                    file:rounded-lg file:border-0 
+                    file:text-sm file:font-medium 
+                    file:bg-gray-700 file:text-white
+                    hover:file:bg-gray-600
+                    transition-all duration-300"
                   onChange={handleChange}
                 />
                 {previewImage && (
-                  <div className="mt-2 w-full h-40 rounded-xl overflow-hidden border border-[rgba(161,98,232,0.3)]">
+                  <div className="mt-2 w-full h-40 rounded-lg overflow-hidden border border-gray-600">
                     <img 
                       src={previewImage} 
                       alt="Preview" 
@@ -299,22 +305,22 @@ export default function CreatePostPage() {
             </div>
           </div>
 
-          <div className="flex justify-end gap-4">
+          <div className="flex flex-col sm:flex-row justify-end gap-4">
             <button
               type="button"
               onClick={handleCancel}
               disabled={isLoading}
-              className="px-6 py-3 rounded-xl font-medium transition-all duration-300 bg-[rgba(255,255,255,0.1)] hover:bg-[rgba(255,255,255,0.2)] text-[#121212] border border-[rgba(161,98,232,0.3)] hover:border-[#a162e8] hover:shadow-[0_0_10px_rgba(161,98,232,0.2)]"
+              className="px-6 py-3 rounded-lg font-medium transition-all duration-300 bg-gray-700 hover:bg-gray-600 text-white border border-gray-600 hover:border-teal-400"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isLoading}
-              className={`px-6 py-3 rounded-xl font-medium transition-all duration-300 flex items-center justify-center ${
+              className={`px-6 py-3 rounded-lg font-medium transition-all duration-300 flex items-center justify-center ${
                 isLoading
-                  ? "bg-gradient-to-r from-[#a162e8]/60 to-[#08e8de]/60 text-[#121212]/70 cursor-not-allowed"
-                  : "bg-gradient-to-r from-[#a162e8] to-[#08e8de] text-[#121212] hover:shadow-[0_0_20px_rgba(161,98,232,0.5)] hover:scale-[1.02]"
+                  ? "bg-teal-600/60 text-white/70 cursor-not-allowed"
+                  : "bg-teal-600 hover:bg-teal-500 text-white hover:shadow-lg"
               }`}
             >
               {isLoading ? (

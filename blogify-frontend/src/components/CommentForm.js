@@ -64,41 +64,41 @@ export default function CommentForm({ postId, onCommentAdded }) {
           value={text}
           onChange={handleTextChange}
           rows="4"
-          className="w-full backdrop-blur-sm bg-[rgba(255,255,255,0.1)] border border-[rgba(161,98,232,0.3)] p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#a162e8] focus:border-transparent text-[#121212] placeholder-[rgba(18,18,18,0.6)] transition-all duration-300 hover:border-[#08e8de]"
-          placeholder="Share your cosmic thoughts..."
+          className="w-full bg-gray-700 border border-gray-600 p-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent text-white placeholder-gray-400 transition-all duration-300"
+          placeholder="Share your thoughts..."
           required
           disabled={isSubmitting}
         ></textarea>
-        <div className="absolute bottom-3 right-3 text-xs text-[#555] backdrop-blur-sm bg-[rgba(255,255,255,0.2)] px-2 py-1 rounded-full">
+        <div className="absolute bottom-3 right-3 text-xs text-gray-400 bg-gray-800 px-2 py-1 rounded">
           {charCount}/{maxChars}
         </div>
       </div>
       
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+        {error && (
+          <p className="text-sm text-red-400 px-3 py-2 rounded bg-gray-700 border border-gray-600">
+            {error}
+          </p>
+        )}
+        
         <button
           type="submit"
           disabled={!text.trim() || isSubmitting}
-          className={`px-6 py-3 rounded-xl transition-all duration-300 flex items-center gap-2 ${
+          className={`px-6 py-3 rounded-lg transition-all duration-300 flex items-center gap-2 ${
             !text.trim() || isSubmitting
-              ? "bg-[rgba(161,98,232,0.1)] text-[#121212]/50 cursor-not-allowed border border-[rgba(161,98,232,0.2)]"
-              : "bg-gradient-to-r from-[#a162e8] to-[#08e8de] text-[#121212] hover:shadow-[0_0_15px_rgba(161,98,232,0.5)] hover:scale-105"
+              ? "bg-gray-700 text-gray-400 cursor-not-allowed border border-gray-600"
+              : "bg-teal-600 hover:bg-teal-500 text-white hover:shadow-lg"
           }`}
         >
           {isSubmitting ? (
             <>
               <span className="inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></span>
-              Transmitting...
+              Posting...
             </>
           ) : (
             "Post Comment"
           )}
         </button>
-        
-        {error && (
-          <p className="text-sm text-[#a162e8] px-3 py-2 rounded-xl backdrop-blur-sm bg-[rgba(161,98,232,0.1)] border border-[rgba(161,98,232,0.3)]">
-            {error}
-          </p>
-        )}
       </div>
     </form>
   )
