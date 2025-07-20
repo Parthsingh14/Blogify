@@ -1,5 +1,6 @@
 const express = require('express');
 const { generateSummary, suggestTitle, correctGrammar } = require('../controllers/aiController');
+const {aiLimiter} = require('../middlewares/rateLimiter');
 
 const router = express.Router();
 
@@ -111,8 +112,8 @@ const router = express.Router();
 
 
 
-router.post('/summary', generateSummary);
-router.post('/title-suggestion', suggestTitle);
-router.post('/grammar-correct', correctGrammar);
+router.post('/summary',aiLimiter, generateSummary);
+router.post('/title-suggestion',aiLimiter, suggestTitle);
+router.post('/grammar-correct',aiLimiter, correctGrammar);
 
 module.exports = router;

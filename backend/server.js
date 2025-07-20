@@ -8,6 +8,7 @@ const commentRoutes = require('./routes/commentRoutes.route');
 const userRoutes = require('./routes/user.route');
 const aiRoutes = require('./routes/ai.route'); // Import AI routes
 const { swaggerUi, swaggerSpec } = require("./config/swagger")
+const {generalLimiter} = require('./middlewares/rateLimiter');
 dotenv.config();
  
 const app = express();
@@ -17,6 +18,8 @@ connectDB();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use(generalLimiter); // Apply the general rate limiter
 
 app.use('/api/auth', authRoutes);
 app.use('/api/posts', postRoutes);

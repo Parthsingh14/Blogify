@@ -1,5 +1,6 @@
 const express = require('express');
 const { registerUser, LoginUser } = require('../controllers/authController');
+const {loginLimiter, registerLimiter}  = require('../middlewares/rateLimiter');
 
 const router = express.Router();
 
@@ -34,7 +35,7 @@ const router = express.Router();
  */
 
 
-router.post('/register', registerUser);
+router.post('/register',registerLimiter, registerUser);
 
 
 /**
@@ -64,6 +65,6 @@ router.post('/register', registerUser);
  *         description: Invalid credentials
  */
 
-router.post('/login', LoginUser);
+router.post('/login', loginLimiter, LoginUser);
 
 module.exports = router;

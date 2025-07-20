@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { createComment, getCommentsByPost, deleteComment } = require('../controllers/commentController');
 const authMiddleware = require('../middlewares/authMiddleware');
+const {commentLimiter} = require('../middlewares/rateLimiter');
 
 /**
  * @swagger
@@ -63,7 +64,7 @@ const authMiddleware = require('../middlewares/authMiddleware');
  *         description: Comment deleted
  */
 
-router.post('/posts/:postId/comments', authMiddleware, createComment);
+router.post('/posts/:postId/comments', authMiddleware,commentLimiter, createComment);
 router.get('/posts/:postId/comments', getCommentsByPost);
 router.delete('/comments/:commentId', authMiddleware, deleteComment);
 

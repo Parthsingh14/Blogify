@@ -9,6 +9,8 @@ const {
   deletePost,
 } = require('../controllers/postController');
 
+const {createPostLimiter} = require('../middlewares/rateLimiter');
+
 const router = express.Router();
 
 /**
@@ -41,7 +43,7 @@ const router = express.Router();
 
 
 // Route to create a new post
-router.post('/', authMiddleware, upload, createPost);
+router.post('/', authMiddleware, upload, createPostLimiter, createPost);
 
 /**
  * @swagger
