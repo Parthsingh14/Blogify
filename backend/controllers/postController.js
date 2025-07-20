@@ -1,5 +1,7 @@
 const Post = require("../models/Post");
 const cloudinary = require("../config/cloudinary");
+const redisClient = require("../config/redisClient")
+const { invalidatePostsCache } = require("../config/redisCache");
 
 module.exports.createPost = async (req, res) => {
   try {
@@ -32,6 +34,7 @@ module.exports.createPost = async (req, res) => {
     });
 
     await newPost.save();
+    await invalidatePostsCache();
     res.status(201).json({
       message: "Post created successfully",
       post: newPost,
@@ -46,46 +49,71 @@ module.exports.createPost = async (req, res) => {
 };
 
 module.exports.getAllPosts = async (req, res) => {
- try{
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 10;
-  const skip = (page - 1) * limit;
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
 
-  const {category,search} = req.query;
-  const query = {};
-  if (category) {
-    query.category = category;
-  }
-  if(search){
-    query.$or = [
-      { title: { $regex: search, $options: "i" } },
-      { content: { $regex: search, $options: "i" } }
-    ];
-  }
+    const { category, search } = req.query;
+    const query = {};
+    if (category) query.category = category;
+    if (search) {
+      query.$or = [
+        { title: { $regex: search, $options: "i" } },
+        { content: { $regex: search, $options: "i" } },
+      ];
+    }
 
-  const total = await Post.countDocuments(query);
-  const posts = await Post.find(query)
-    .populate("author", "name email")
-    .sort({ createdAt: -1 })
-    .skip(skip)
-    .limit(limit);
+    const cacheKey = `posts:page=${page}&limit=${limit}&category=${category || ""}&search=${search || ""}`;
 
-    res.json({
+    // ✅ Use await for Redis get (returns string or null)
+    const cachedData = await redisClient.get(cacheKey);
+
+    if (cachedData) {
+      console.log("✅ Returning cached data for:", cacheKey);
+      return res.json({ ...JSON.parse(cachedData), source: "cache" });
+    }
+
+    // If not cached, fetch from DB
+    const total = await Post.countDocuments(query);
+    const posts = await Post.find(query)
+      .populate("author", "name email")
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    const response = {
       total,
       page,
       pages: Math.ceil(total / limit),
       posts,
-    });
- }
-  catch (err) {
+    };
+
+    // ✅ Use setEx for expiry
+    await redisClient.setEx(cacheKey, 600, JSON.stringify(response));
+    console.log("💾 Cached result for:", cacheKey);
+
+    res.json({ ...response, source: "database" });
+  } catch (err) {
     console.error("Error fetching posts:", err);
-    res.status(500).json({
-      message: "Internal server error",
-      error: err.message,
-    });
-}};
+    res.status(500).json({ message: "Internal server error", error: err.message });
+  }
+};
 
 module.exports.getSinglePost = async (req, res) => {
+
+  const postId = req.params.id;
+  const cacheKey = `post:id:${postId}`;
+
+  const cachedData = await redisClient.get(cacheKey);
+  if (cachedData){
+      console.log(`✅ Returning cached post for ID: ${postId}`);
+       return res.json({
+      message: "Post fetched successfully (from cache)",
+      post: JSON.parse(cachedData),
+    });
+  }
+
   const post = await Post.findById(req.params.id).populate(
     "author",
     "name email"
@@ -95,6 +123,12 @@ module.exports.getSinglePost = async (req, res) => {
       message: "Post not found",
     });
   }
+
+  await redisClient.set(cacheKey, JSON.stringify(post),{
+    EX: 3600,
+  })
+  console.log(`💾 Cached post for ID: ${postId}`);
+
   res.status(200).json({
     message: "Post fetched successfully",
     post: post,
@@ -121,6 +155,9 @@ module.exports.updatePost = async (req, res) => {
     post.category = req.body.category || post.category;
 
     await post.save();
+     const singlePostKey = `post:id:${req.params.id}`;
+    await redisClient.del(singlePostKey); // ✅ delete single post cache
+    await invalidatePostsCache(); 
     res.status(200).json({
       message: "Post updated successfully",
       post: post,
@@ -150,6 +187,7 @@ module.exports.deletePost = async (req,res)=>{
             });
         }
         await Post.findByIdAndDelete(post._id);
+        await invalidatePostsCache();
         res.status(200).json({
             message: "Post deleted successfully",
         });
