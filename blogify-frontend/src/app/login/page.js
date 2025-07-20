@@ -41,12 +41,12 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-900 p-4 overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-gray-900 px-4 overflow-hidden">
       <div className="relative w-full max-w-4xl flex items-center justify-center">
         {/* Background Text - Starts hidden (opacity:0) behind form, then slides left and appears */}
         <motion.div
           initial={{ x: 0, opacity: 0 }}
-          animate={{ x: -100, opacity: 0.8 }}
+          animate={{ x: -10, opacity: 0.8 }}
           transition={{ duration: 0.7, ease: "easeOut" }}
           className="absolute left-0 text-gray-500 font-bold z-0"
           style={{ width: "200px" }}
@@ -60,8 +60,8 @@ export default function LoginPage() {
         {/* Login Form - Starts centered, then slides right */}
         <motion.div
           initial={{ x: 0 }}
-          animate={{ x: 100 }}
-          transition={{ duration: 0.7, ease: "easeOut" }}
+          animate={{ x: 0 }}
+          transition={{ duration: 0, ease: "easeOut" }}
           className="bg-gray-800 p-6 md:p-8 rounded-lg shadow-lg border border-gray-700 w-full max-w-md relative z-10"
         >
           <div className="text-center mb-6">

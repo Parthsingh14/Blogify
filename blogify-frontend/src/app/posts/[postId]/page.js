@@ -118,7 +118,7 @@ export default function PostDetailPage() {
   )
 
   return (
-    <div className="max-w-4xl px-6 py-12 mx-6 md:ml-24">
+    <div className="w-fit px-6 py-12 mx-6">
       {/* Back Button */}
       <button
         onClick={() => router.back()}
@@ -148,7 +148,7 @@ export default function PostDetailPage() {
           <button
             onClick={handleSummaryClick}
             disabled={isSummaryLoading}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all duration-300 ${
+            className={`flex items-center gap-2 px-2 py-1 rounded-lg transition-all duration-300 ${
               showSummary 
                 ? 'bg-teal-600 text-white' 
                 : 'bg-gray-700 text-white hover:bg-gray-600'
@@ -215,7 +215,7 @@ export default function PostDetailPage() {
               <li key={comment._id} className="bg-gray-700 p-4 rounded-lg border border-gray-600">
                 <div className="flex flex-col sm:flex-row justify-between items-start mb-2 gap-2">
                   <p className="font-medium text-white">
-                    {comment.user?.name || "Anonymous"}
+                    {comment.author?.name || "Anonymous"}
                   </p>
                   <span className="text-xs text-gray-400">
                     {new Date(comment.createdAt).toLocaleString()}

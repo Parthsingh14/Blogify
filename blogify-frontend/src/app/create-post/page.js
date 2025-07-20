@@ -133,7 +133,7 @@ export default function CreatePostPage() {
 
   return (
     <div className="min-h-screen py-12 px-6 bg-gray-900">
-      <div className="max-w-3xl mx-6 md:ml-24 bg-gray-800 p-8 rounded-lg shadow-lg border border-gray-700">
+      <div className="w-full bg-gray-800 p-8 rounded-lg shadow-lg border border-gray-700">
         {/* Back Button */}
         <button
           onClick={() => router.back()}

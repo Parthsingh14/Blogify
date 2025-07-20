@@ -25,11 +25,11 @@ export default function RootLayout({ children }) {
         <div className="fixed inset-0 bg-[radial-gradient(circle_at_center,#1a1a1a_0%,#111_70%)] opacity-100" />
         
         {/* Main content container - left aligned */}
-        <div className="min-h-screen relative">
+        <div className="h-screen relative">
           <Navbar />
           
           {/* Left-aligned content container */}
-          <main className="w-full max-w-7xl px-2 py-8 mx-0 md:ml-12 lg:ml-2">
+          <main className="w-full">
             <div className="relative z-10">
               {children}
             </div>

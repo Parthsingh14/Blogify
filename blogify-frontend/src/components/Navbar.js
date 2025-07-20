@@ -128,7 +128,7 @@ export default function Navbar() {
               href="/admin" 
               className="bg-gray-800 text-white font-medium px-4 py-2 rounded border border-gray-700 transition-all duration-300 hover:bg-gray-700 hover:shadow-lg"
             >
-              Admin
+              Dashboard
             </Link>
           )}
         </div>

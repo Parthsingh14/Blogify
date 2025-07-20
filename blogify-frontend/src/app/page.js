@@ -64,7 +64,7 @@ export default function Home() {
   }
 
   return (
-    <div className="space-y-8 px-2 py-8 ml-0 md:ml-12 lg:ml-24">
+    <div className="space-y-8 px-2 py-8 ml-0 md:ml-12 lg:ml-24 lg:mr-24">
 
       {/* Search + Filter - Left aligned */}
       <div className="flex flex-col sm:flex-row gap-4 mb-8 w-full">

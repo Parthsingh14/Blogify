@@ -86,22 +86,24 @@ export default function RegisterPage() {
         {/* Background Text - Starts hidden behind form, then slides left */}
         <motion.div
           initial={{ x: 0, opacity: 0 }}
-          animate={{ x: -100, opacity: 0.8 }}
-          transition={{ duration: 0.7, ease: "easeOut" }}
+          animate={{ x: -50, opacity: 0.8 }}
+          transition={{ duration: 1, ease: "easeOut" }}
           className="absolute left-0 text-gray-500 font-bold z-0"
           style={{ width: "200px" }}
         >
           <div className="text-xl md:text-2xl leading-tight">
             <p>SHARE YOUR</p>
             <p>STORIES</p>
+            <p>WITH EVERYONE</p>
+            <p>ON THIS PLATFORM</p>
           </div>
         </motion.div>
 
         {/* Register Form - Starts centered, then slides right */}
         <motion.div
           initial={{ x: 0 }}
-          animate={{ x: 100 }}
-          transition={{ duration: 0.7, ease: "easeOut" }}
+          animate={{ x: 0 }}
+          transition={{ duration: 0, ease: "easeOut" }}
           className="bg-gray-800 p-6 md:p-8 rounded-lg shadow-lg border border-gray-700 w-full max-w-md relative z-10"
         >
           <div className="text-center mb-6">
