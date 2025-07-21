@@ -5,59 +5,101 @@ import axios from "@/lib/api"
 import Link from "next/link"
 import { motion } from "framer-motion"
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const router = useRouter()
   const [formData, setFormData] = useState({
+    name: "",
     email: "",
     password: "",
+    confirmPassword: ""
   })
   const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+  const [passwordStrength, setPasswordStrength] = useState(0)
 
   const handleChange = (e) => {
     setError("")
-    setFormData({ ...formData, [e.target.name]: e.target.value })
+    const { name, value } = e.target
+    setFormData(prev => ({ ...prev, [name]: value }))
+
+    if (name === "password") {
+      calculatePasswordStrength(value)
+    }
+  }
+
+  const calculatePasswordStrength = (password) => {
+    let strength = 0
+    if (password.length >= 8) strength += 1
+    if (/[A-Z]/.test(password)) strength += 1
+    if (/[0-9]/.test(password)) strength += 1
+    if (/[^A-Za-z0-9]/.test(password)) strength += 1
+    setPasswordStrength(strength)
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (isLoading) return
-    
+
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match")
+      return
+    }
+
+    if (passwordStrength < 3) {
+      setError("Password is too weak. Please use a stronger password.")
+      return
+    }
+
     setIsLoading(true)
     setError("")
-    
+
     try {
-      const res = await axios.post("/auth/login", formData)
-      localStorage.setItem("token", res.data.token)
-      window.dispatchEvent(new Event('auth-change'))
-      router.push("/")
+      await axios.post("/auth/register", {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password
+      })
+      router.push("/login?registered=true")
     } catch (err) {
-      setError(err.response?.data?.message || "Login failed. Please check your credentials.")
-      console.error("Login error:", err)
+      setError(err.response?.data?.message || "Registration failed. Please try again.")
+      console.error("Registration error:", err)
     } finally {
       setIsLoading(false)
     }
   }
 
+  const getPasswordStrengthColor = () => {
+    switch(passwordStrength) {
+      case 0: return "bg-red-500"
+      case 1: return "bg-red-400"
+      case 2: return "bg-yellow-500"
+      case 3: return "bg-teal-400"
+      case 4: return "bg-teal-500"
+      default: return "bg-gray-600"
+    }
+  }
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-900 px-4 overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-gray-900 p-4 overflow-hidden">
       <div className="relative w-full max-w-4xl flex items-center justify-center">
-        {/* Background Text - Starts hidden (opacity:0) behind form, then slides left and appears */}
+        {/* Background Text - Starts hidden behind form, then slides left */}
         <motion.div
           initial={{ x: 0, opacity: 0 }}
-          animate={{ x: -10, opacity: 0.8 }}
-          transition={{ duration: 0.7, ease: "easeOut" }}
+          animate={{ x: -50, opacity: 0.8 }}
+          transition={{ duration: 1, ease: "easeOut" }}
           className="absolute left-0 text-gray-500 font-bold z-0"
           style={{ width: "200px" }}
         >
           <div className="text-xl md:text-2xl leading-tight">
-            <p>BLOGIFY</p>
-            <p>YOUR IDEAS</p>
+            <p>SHARE YOUR</p>
+            <p>STORIES AND THOUGHTS</p>
+            <p>WITH EVERYONE</p>
+            <p>ON MINDSCRIBE</p>
           </div>
         </motion.div>
 
-        {/* Login Form - Starts centered, then slides right */}
+        {/* Register Form - Starts centered, then slides right */}
         <motion.div
           initial={{ x: 0 }}
           animate={{ x: 0 }}
@@ -65,8 +107,8 @@ export default function LoginPage() {
           className="bg-gray-800 p-6 md:p-8 rounded-lg shadow-lg border border-gray-700 w-full max-w-md relative z-10"
         >
           <div className="text-center mb-6">
-            <h2 className="text-2xl md:text-3xl font-bold text-white">Welcome Back</h2>
-            <p className="text-gray-400 mt-2">Sign in to your account</p>
+            <h2 className="text-2xl md:text-3xl font-bold text-white">Create Account</h2>
+            <p className="text-gray-400 mt-2">Join the Blogify community</p>
           </div>
 
           {error && (
@@ -76,6 +118,22 @@ export default function LoginPage() {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-1">
+                Full Name
+              </label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                placeholder="Your full name"
+                className="w-full px-4 py-2.5 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent bg-gray-700 text-white placeholder-gray-400"
+                onChange={handleChange}
+                required
+                autoComplete="name"
+              />
+            </div>
+
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-1">
                 Email Address
@@ -105,7 +163,7 @@ export default function LoginPage() {
                   className="w-full px-4 py-2.5 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent bg-gray-700 text-white placeholder-gray-400 pr-12"
                   onChange={handleChange}
                   required
-                  autoComplete="current-password"
+                  autoComplete="new-password"
                 />
                 <button
                   type="button"
@@ -125,24 +183,49 @@ export default function LoginPage() {
                   )}
                 </button>
               </div>
+              <div className="mt-2">
+                <div className="flex gap-1 h-1">
+                  {[...Array(4)].map((_, i) => (
+                    <div 
+                      key={i} 
+                      className={`flex-1 rounded-full ${i < passwordStrength ? getPasswordStrengthColor() : "bg-gray-600"}`}
+                    ></div>
+                  ))}
+                </div>
+                <p className="text-xs text-gray-400 mt-1">
+                  {passwordStrength < 2 ? "Weak" : 
+                   passwordStrength < 4 ? "Good" : "Strong"} password
+                </p>
+              </div>
             </div>
 
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <input
-                  id="remember-me"
-                  name="remember-me"
-                  type="checkbox"
-                  className="h-4 w-4 text-teal-500 focus:ring-teal-500 border-gray-600 rounded bg-gray-700"
-                />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-300">
-                  Remember me
-                </label>
-              </div>
+            <div>
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300 mb-1">
+                Confirm Password
+              </label>
+              <input
+                type={showPassword ? "text" : "password"}
+                id="confirmPassword"
+                name="confirmPassword"
+                placeholder="••••••••"
+                className="w-full px-4 py-2.5 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent bg-gray-700 text-white placeholder-gray-400"
+                onChange={handleChange}
+                required
+                autoComplete="new-password"
+              />
+            </div>
 
-              <Link href="/forgot-password" className="text-sm text-teal-400 hover:text-teal-300">
-                Forgot password?
-              </Link>
+            <div className="flex items-center">
+              <input
+                id="terms"
+                name="terms"
+                type="checkbox"
+                className="h-4 w-4 text-teal-500 focus:ring-teal-500 border-gray-600 rounded bg-gray-700"
+                required
+              />
+              <label htmlFor="terms" className="ml-2 block text-sm text-gray-300">
+                I agree to the <Link href="/terms" className="text-teal-400 hover:underline">Terms</Link>
+              </label>
             </div>
 
             <button
@@ -160,19 +243,19 @@ export default function LoginPage() {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  Signing in...
+                  Creating account...
                 </>
               ) : (
-                "Sign In"
+                "Create Account"
               )}
             </button>
           </form>
 
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-400">
-              Don't have an account?{" "}
-              <Link href="/register" className="font-medium text-teal-400 hover:text-teal-300">
-                Sign up
+              Already have an account?{" "}
+              <Link href="/login" className="font-medium text-teal-400 hover:text-teal-300">
+                Sign in
               </Link>
             </p>
           </div>

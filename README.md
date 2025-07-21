@@ -1,8 +1,21 @@
-# Blogify - Advanced Fullstack Blogging Platform
+# MindScribe - Fullstack Blogging Platform
 
-Blogify is a robust fullstack blogging platform featuring user authentication, blog post management, comments, admin controls, and AI-powered utilities.  
+MindScribe is a robust fullstack blogging platform featuring user authentication, blog post management, comments, admin controls, and AI-powered utilities.  
 This monorepo contains both the backend API (Node.js/Express/MongoDB) and the frontend (Next.js/React).
 
+
+---
+
+## ✅ Project Status
+
+- ✅ Rate Limiting implemented to prevent abuse
+- ✅ Redis Caching added for performance boost
+- ✅ SEO Optimization complete (Open Graph, dynamic metadata)
+- ✅ Dockerization complete (frontend + backend + MongoDB + Redis)
+- 🚧 CI/CD pipeline with GitHub Actions is in progress
+- 🚀 Deployment ready and partially live
+
+---
 ---
 
 ## Tech Stack
@@ -70,6 +83,7 @@ http://localhost:8000/api/
 |-------------------------|--------|------------------------------------|---------------|----------------------------|
 | `/summary`              | POST   | Generate summary for content       | No            | `{ content }`              |
 | `/title-suggestion`     | POST   | Generate catchy blog title         | No            | `{ content }`              |
+| `/grammer-check   `     | POST   | Autocorrect the content            | No            | `{ content }`              |
 
 ---
 
@@ -94,6 +108,7 @@ CLOUDINARY_API_KEY=your_cloudinary_key
 CLOUDINARY_API_SECRET=your_cloudinary_secret
 GEMINI_API_KEY=your_google_gemini_api_key
 HUGGINGFACE_API_KEY=your_huggingface_api_key
+REDIS_URL=REDIS_URL
 ```
 
 ---
@@ -113,6 +128,12 @@ HUGGINGFACE_API_KEY=your_huggingface_api_key
    ```
 
    Server runs at [http://localhost:8000](http://localhost:8000)
+
+3. Start Redis Server:
+   3.1 Download redis and then this command to start redis
+   ```bash
+   redis-server
+   ```
 
 ---
 
@@ -160,7 +181,7 @@ curl -X POST http://localhost:8000/api/title-suggestion \
 1. Install dependencies:
 
    ```bash
-   cd blogify-frontend
+   cd mindscribe-frontend
    npm install
    ```
 
@@ -184,7 +205,11 @@ curl -X POST http://localhost:8000/api/title-suggestion \
 - Comment on posts
 - Admin user management
 - AI-powered blog utilities (title suggestion, summarization)
-- Responsive UI with Tailwind CSS
+- SEO-optimized with dynamic meta tags (OpenGraph & Twitter)
+- Redis caching & rate limiting
+- Dockerized (frontend, backend, MongoDB, Redis)
+- CI/CD pipeline in progress via GitHub Actions
+- Ready for deployment (Render, Railway, etc.)
 
 ---
 

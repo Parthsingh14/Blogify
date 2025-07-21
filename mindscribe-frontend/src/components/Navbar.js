@@ -78,7 +78,7 @@ export default function Navbar() {
           href="/" 
           className="font-bold text-2xl text-white hover:text-teal-400 transition-colors duration-300"
         >
-          Blogify
+          MindScribe
         </Link>
 
         {/* Mobile menu button */}
