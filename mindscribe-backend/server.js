@@ -1,7 +1,9 @@
+const dotenv = require('dotenv');
+dotenv.config();
+
 require('./config/redisClient');
 const express = require('express');
 const cors = require('cors');
-const dotenv = require('dotenv');
 const connectDB = require('./config/db')
 const authRoutes = require('./routes/authRoutes.route')
 const postRoutes = require('./routes/postRoutes.route')
@@ -10,7 +12,7 @@ const userRoutes = require('./routes/user.route');
 const aiRoutes = require('./routes/ai.route'); // Import AI routes
 const { swaggerUi, swaggerSpec } = require("./config/swagger")
 const {generalLimiter} = require('./middlewares/rateLimiter');
-dotenv.config();
+
  
 const app = express();
 
