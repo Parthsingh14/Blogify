@@ -18,7 +18,17 @@ const app = express();
 
 connectDB();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:3000",          // local dev
+      "https://blogify-flax-kappa.vercel.app/" // replace with actual deployed frontend URL
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+    credentials: true,
+  })
+)
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
