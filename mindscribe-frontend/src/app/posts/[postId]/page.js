@@ -2,7 +2,11 @@ import PostDetailPage from './PostDetailPage'
 import { getPostForSEO } from '@/lib/getPostForSEO'
 
 export async function generateMetadata({ params }) {
-  const post = await getPostForSEO(params.postId)
+
+  const { postId } = await params;
+
+
+  const post = await getPostForSEO(postId)
 
   if (!post) {
     return {
@@ -17,7 +21,7 @@ export async function generateMetadata({ params }) {
     openGraph: {
       title: post.title,
       description: post.content?.slice(0, 150),
-      url: `https://blogify.netlify.app/posts/${params.postId}`,
+      url: `https://blogify.netlify.app/posts/${postId}`,
       images: [
         {
           url: post.coverImage || '/default-og.png',
