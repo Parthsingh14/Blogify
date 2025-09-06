@@ -93,7 +93,7 @@ export default function EditPostPage() {
     setError("")
     
     try {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/grammer-correct`, {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/grammar-correct`, {
         content
       })
       setContent(response.data.corrected)
