@@ -189,8 +189,8 @@ export default function PostDetailPage() {
         </div>
         
         <div className="flex flex-col sm:flex-row items-center justify-between text-sm text-gray-400 border-t border-gray-700 pt-4">
-          <span>Posted by {post.author?.name || 'Anonymous'}</span>
-          <span>{new Date(post.createdAt).toLocaleDateString()}</span>
+          <span>Posted by {post?.author?.name || 'Anonymous'}</span>
+          <span>{post?.createdAt ? new Date(post.createdAt).toLocaleDateString() : ''}</span>
         </div>
       </article>
 
@@ -211,7 +211,8 @@ export default function PostDetailPage() {
           <p className="text-gray-400 text-center py-4">No comments yet. Be the first to share your thoughts!</p>
         ) : (
           <ul className="space-y-4">
-            {comments.map((comment) => (
+            {comments.map((comment, i) => (
+              comment ? (
               <li key={comment._id} className="bg-gray-700 p-4 rounded-lg border border-gray-600">
                 <div className="flex flex-col sm:flex-row justify-between items-start mb-2 gap-2">
                   <p className="font-medium text-white">
@@ -223,6 +224,7 @@ export default function PostDetailPage() {
                 </div>
                 <p className="text-gray-300">{comment.text}</p>
               </li>
+              ) : null
             ))}
           </ul>
         )}

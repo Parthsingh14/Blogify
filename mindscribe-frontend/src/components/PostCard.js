@@ -98,7 +98,7 @@ export default function PostCard({ post }) {
         </div>
 
         {/* Image on the right */}
-        <div className="w-full md:w-1/3 lg:w-1/4 h-48 md:h-auto relative overflow-hidden rounded-lg group">
+        <div className="w-full md:w-1/3 lg:w-1/4 aspect-[4/3] relative overflow-hidden rounded-lg group">
           <img
             src={post.coverImage || '/placeholder-image.jpg'}
             alt={post.title}

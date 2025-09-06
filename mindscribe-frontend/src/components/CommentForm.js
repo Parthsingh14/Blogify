@@ -1,60 +1,70 @@
-"use client"
-import { useState, useRef } from "react"
-import axios from "@/lib/api"
+"use client";
+import { useState, useRef } from "react";
+import axios from "@/lib/api";
 
 export default function CommentForm({ postId, onCommentAdded }) {
-  const [text, setText] = useState("")
-  const [error, setError] = useState("")
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [charCount, setCharCount] = useState(0)
-  const textareaRef = useRef(null)
-  const maxChars = 500
+  const [text, setText] = useState("");
+  const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [charCount, setCharCount] = useState(0);
+  const textareaRef = useRef(null);
+  const maxChars = 500;
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    if (!text.trim() || isSubmitting) return
+    e.preventDefault();
+    if (!text.trim() || isSubmitting) return;
 
-    setIsSubmitting(true)
-    setError("")
-    
+    setIsSubmitting(true);
+    setError("");
+
     try {
       // Optimistic update
       const tempComment = {
         _id: `temp-${Date.now()}`,
         text,
         user: { name: "You" },
-        createdAt: new Date().toISOString()
-      }
-      onCommentAdded(tempComment)
-      
+        createdAt: new Date().toISOString(),
+      };
+      onCommentAdded(tempComment);
+
+      const token = localStorage.getItem("token");
+
       // Actual API call
-      const res = await axios.post(`/posts/${postId}/comments`, { text })
-      
+      const res = await axios.post(
+        `/posts/${postId}/comments`,
+        { text },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
       // Replace optimistic comment with real one
       onCommentAdded({
         ...res.data.comment,
-        user: { name: "You" } // Temporary until refresh
-      })
-      
-      setText("")
-      setCharCount(0)
-      textareaRef.current?.focus()
+        user: { name: "You" }, // Temporary until refresh
+      });
+
+      setText("");
+      setCharCount(0);
+      textareaRef.current?.focus();
     } catch (err) {
-      setError("Failed to add comment - please try again")
+      setError("Failed to add comment - please try again");
       // Remove optimistic comment on error
-      onCommentAdded(null)
+      onCommentAdded(null);
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   const handleTextChange = (e) => {
-    const value = e.target.value
+    const value = e.target.value;
     if (value.length <= maxChars) {
-      setText(value)
-      setCharCount(value.length)
+      setText(value);
+      setCharCount(value.length);
     }
-  }
+  };
 
   return (
     <form onSubmit={handleSubmit} className="mt-4 space-y-3">
@@ -73,14 +83,14 @@ export default function CommentForm({ postId, onCommentAdded }) {
           {charCount}/{maxChars}
         </div>
       </div>
-      
+
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         {error && (
           <p className="text-sm text-red-400 px-3 py-2 rounded bg-gray-700 border border-gray-600">
             {error}
           </p>
         )}
-        
+
         <button
           type="submit"
           disabled={!text.trim() || isSubmitting}
@@ -101,5 +111,5 @@ export default function CommentForm({ postId, onCommentAdded }) {
         </button>
       </div>
     </form>
-  )
+  );
 }
