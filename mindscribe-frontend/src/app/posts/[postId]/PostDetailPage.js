@@ -70,7 +70,7 @@ export default function PostDetailPage() {
     setIsSummaryLoading(true)
     setShowSummary(true)
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/summary}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/summary`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
