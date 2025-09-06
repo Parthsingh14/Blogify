@@ -71,7 +71,7 @@ export default function EditPostPage() {
     setError("")
     
     try {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/title-suggestion}`, {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/title-suggestion`, {
         content
       })
       setSuggestedTitles([response.data.title])
@@ -93,7 +93,7 @@ export default function EditPostPage() {
     setError("")
     
     try {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/grammer-correct}`, {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/grammer-correct`, {
         content
       })
       setContent(response.data.corrected)
