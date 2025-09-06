@@ -110,7 +110,7 @@ export default function CreatePostPage() {
     setError("")
     
     try {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/grammer-correct`, {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/grammar-correct`, {
         content: formData.content
       })
       setFormData({ ...formData, content: response.data.corrected })
