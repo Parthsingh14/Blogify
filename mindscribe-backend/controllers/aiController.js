@@ -10,6 +10,8 @@ const model = genAI.getGenerativeModel({
 });
 
 module.exports.generateSummary = async (req, res) => {
+  console.log(req.body);
+  console.log("Generating summary...");
   const { content } = req.body;
   if (!content) {
     return res.status(400).json({ error: "Content is required" });
