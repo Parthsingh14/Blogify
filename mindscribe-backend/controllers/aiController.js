@@ -1,16 +1,23 @@
 const axios = require("axios");
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+const { GoogleGenAI } = require("@google/genai");
 const suggestBlogTitle = require("../services/aiServices"); // Adjust the path as necessary
 const correctGrammer = require("../services/aiGrammer");
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-
-const model = genAI.getGenerativeModel({
-  model: "gemini-1.0-pro", // or gemini-1.5-pro
+const ai = new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY,
 });
 
+// Common AI generator function
+async function generateAIResponse(prompt) {
+  const response = await ai.models.generateContent({
+    model: "gemini-1.5-flash",
+    contents: prompt,
+  });
+
+  return response.text?.trim();
+}
+
 module.exports.generateSummary = async (req, res) => {
-  console.log(req.body);
   console.log("Generating summary...");
   const { content } = req.body;
   if (!content) {
@@ -26,8 +33,8 @@ Blog content:
 ${content}
 `;
 
-    const result = await model.generateContent(prompt);
-    const summary = result.response.text().trim();
+    
+    const summary = await generateAIResponse(prompt);
 
     if (!summary) {
       return res.status(500).json({ error: "Failed to generate summary" });
