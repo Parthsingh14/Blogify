@@ -1,14 +1,14 @@
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+const { GoogleGenAI } = require("@google/genai");
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-
-const model = genAI.getGenerativeModel({
-  model: "gemini-1.5-flash", // or "gemini-1.5-pro" if you want more quality
+const ai = new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY,
 });
 
 async function suggestBlogTitle(content) {
   const prompt = `
-You are a blog post title generator. Based on the content provided below, generate **only one short and catchy blog title**. Do not include any introduction or explanation.
+You are a blog post title generator.
+Based on the content below, generate ONLY ONE short, catchy blog title.
+Do not include explanations or extra text.
 
 Blog content:
 ${content}
@@ -16,17 +16,33 @@ ${content}
 Respond with only the title.
 `;
 
-  const result = await model.generateContent(prompt);
-  const text = result.response.text();
+  try {
+    const response = await ai.models.generateContent({
+      model: "gemini-1.5-flash",
+      contents: prompt,
+    });
 
-  const lines = text
-    .replace(/[*`"#]/g, '')
-    .trim()
-    .split('\n')
-    .filter(line => line && !line.toLowerCase().includes("title") && line.length > 10);
+    const text = response.text?.trim();
 
-  return lines[0] || "Untitled";
+    if (!text) return "Untitled";
+
+    const cleaned = text
+      .replace(/[*`"#]/g, "")
+      .trim()
+      .split("\n")
+      .filter(
+        (line) =>
+          line &&
+          !line.toLowerCase().includes("title") &&
+          line.length > 5
+      );
+
+    return cleaned[0] || "Untitled";
+
+  } catch (error) {
+    console.error("❌ Title Generation Error:", error);
+    return "Untitled";
+  }
 }
-
 
 module.exports = suggestBlogTitle;

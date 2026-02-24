@@ -1,4 +1,3 @@
-const axios = require("axios");
 const { GoogleGenAI } = require("@google/genai");
 const suggestBlogTitle = require("../services/aiServices"); // Adjust the path as necessary
 const correctGrammer = require("../services/aiGrammer");

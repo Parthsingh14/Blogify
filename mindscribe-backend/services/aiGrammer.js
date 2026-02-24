@@ -1,24 +1,31 @@
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+const { GoogleGenAI } = require("@google/genai");
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-
-const model = genAI.getGenerativeModel({
-  model: "gemini-1.5-flash",
+const ai = new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY,
 });
 
 async function correctGrammar(content) {
   const prompt = `
-You are a grammar correction assistant. Your job is to improve grammar, spelling, punctuation, and fluency in the following blog content. 
+You are a grammar correction assistant.
+Improve grammar, spelling, punctuation, and fluency in the text below.
 Return ONLY the corrected version. Do not add explanations.
 
 Content:
 ${content}
 `;
 
-  const result = await model.generateContent(prompt);
-  const text = result.response.text().trim();
+  try {
+    const response = await ai.models.generateContent({
+      model: "gemini-1.5-flash",
+      contents: prompt,
+    });
 
-  return text;
+    return response.text?.trim() || content;
+
+  } catch (error) {
+    console.error("❌ Grammar Correction Error:", error);
+    return content; // fallback to original if AI fails
+  }
 }
 
 module.exports = correctGrammar;
