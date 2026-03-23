@@ -16,15 +16,22 @@ ${content}
 
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-1.5-flash",
-      contents: prompt,
+      model: "gemini-2.0-flash",
+      contents: [
+        {
+          role: "user",
+          parts: [{ text: prompt }],
+        },
+      ],
     });
 
-    return response.text?.trim() || content;
+    const text = response?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+    return text?.trim() || content;
 
   } catch (error) {
     console.error("❌ Grammar Correction Error:", error);
-    return content; // fallback to original if AI fails
+    return content;
   }
 }
 

@@ -18,13 +18,18 @@ Respond with only the title.
 
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-1.5-flash",
-      contents: prompt,
+      model: "gemini-2.0-flash",
+      contents: [
+        {
+          role: "user",
+          parts: [{ text: prompt }],
+        },
+      ],
     });
 
-    const text = response.text?.trim();
+    const text = response?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
 
-    if (!text) return "Untitled";
+    if (!text) return "Could not generate title";
 
     const cleaned = text
       .replace(/[*`"#]/g, "")

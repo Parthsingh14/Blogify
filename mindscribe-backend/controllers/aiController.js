@@ -60,10 +60,14 @@ module.exports.suggestTitle = async (req, res) => {
 
   try {
     const title = await suggestBlogTitle(content);
-    res.status(200).json({ title });
+    return res.status(200).json({
+      title: title || "Could not generate title. Please try again.",
+    });
   } catch (error) {
     console.error("❌ Gemini Error:", error);
-    res.status(500).json({ error: "Failed to generate title" });
+    return res.status(200).json({
+      title: "AI is temporarily unavailable.",
+    });
   }
 };
 
@@ -78,9 +82,13 @@ module.exports.correctGrammar = async (req, res) => {
 
   try {
     const corrected = await correctGrammer(content);
-    res.status(200).json({ corrected });
+    return res.status(200).json({
+      corrected: corrected || "Could not correct grammar. Please try again.",
+    });
   } catch (error) {
     console.error("❌ Grammar Correction Error:", error);
-    res.status(500).json({ error: "Failed to correct grammar" });
+    return res.status(200).json({
+      corrected: "AI is temporarily unavailable.",
+    });
   }
 };
