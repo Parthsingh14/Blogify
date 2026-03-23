@@ -27,7 +27,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(generalLimiter); // Apply the general rate limiter
-
+app.use((req, res, next) => {
+  console.log("👉 Incoming:", req.method, req.url);
+  next();
+});
 app.use('/api/auth', authRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/', commentRoutes);

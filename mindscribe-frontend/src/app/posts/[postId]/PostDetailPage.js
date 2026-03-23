@@ -80,7 +80,7 @@ export default function PostDetailPage() {
         })
       })
       const data = await response.json()
-      setSummary(data.summary)
+      setSummary(data.summary || "No summary generated")
     } catch (err) {
       console.error("Failed to generate summary:", err)
       setSummary("Failed to generate summary. Please try again.")

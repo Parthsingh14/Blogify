@@ -9,11 +9,17 @@ const ai = new GoogleGenAI({
 // Common AI generator function
 async function generateAIResponse(prompt) {
   const response = await ai.models.generateContent({
-    model: "gemini-1.5-flash",
-    contents: prompt,
+    model: "gemini-2.0-flash",
+    contents: [
+      {
+        role: "user",
+        parts: [{ text: prompt }],
+      },
+    ],
   });
-
-  return response.text?.trim();
+  console.log("Gemini raw response:", JSON.stringify(response, null, 2));
+  const text = response?.candidates?.[0]?.content?.parts?.[0]?.text;
+  return text?.trim();
 }
 
 module.exports.generateSummary = async (req, res) => {
@@ -32,7 +38,6 @@ Blog content:
 ${content}
 `;
 
-    
     const summary = await generateAIResponse(prompt);
 
     if (!summary) {
